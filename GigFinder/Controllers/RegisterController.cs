@@ -21,7 +21,7 @@ namespace GigFinder.Controllers
             _context = context;
         }
 
-        // POST: api/Events
+        // POST: api/Register
         [HttpPost]
         public async Task<IActionResult> PostEvent(User user)
         {

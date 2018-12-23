@@ -25,29 +25,37 @@ namespace GigFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessages(int? receiver)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
 
-            var query = _context.Messages;
-            if (receiver.HasValue)
-                query.Where(m => m.ReceiverId == receiver);
+            if (authorizedUser.Value == null)
+                return Unauthorized();
 
-            return await query.ToListAsync();
+            if (!receiver.HasValue)
+                return await _context.Messages.Where(m => m.AuthorId == authorizedUser.Value.Id || m.ReceiverId == authorizedUser.Value.Id).ToListAsync();
+            else
+                return await _context.Messages.Where(m => (m.AuthorId == authorizedUser.Value.Id && m.ReceiverId == receiver.Value) 
+                    || (m.AuthorId == receiver.Value && m.ReceiverId == authorizedUser.Value.Id)).ToListAsync();
         }
 
         // GET: api/Messages/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Message>> GetMessage(int id)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
                 return Unauthorized();
 
             var message = await _context.Messages.FindAsync(id);
 
+            if (!(message.AuthorId == authorizedUser.Value.Id || message.ReceiverId == authorizedUser.Value.Id))
+                return Unauthorized();
             if (message == null)
-            {
                 return NotFound();
-            }
 
             return message;
         }
@@ -89,7 +97,13 @@ namespace GigFinder.Controllers
         [HttpPost]
         public async Task<ActionResult<Message>> PostMessage(Message message)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (message.AuthorId != authorizedUser.Value.Id)
                 return Unauthorized();
 
             _context.Messages.Add(message);

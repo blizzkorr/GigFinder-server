@@ -14,7 +14,9 @@ namespace GigFinder.Tools
         public static async Task<GoogleJsonWebSignature.Payload> GetTokenPayloadAsync(string token)
         {
             try
-            { 
+            {
+                if (string.IsNullOrEmpty(token))
+                    return null;
                 return await GoogleJsonWebSignature.ValidateAsync(token);
             }
             catch (InvalidJwtException e)
@@ -54,13 +56,11 @@ namespace GigFinder.Tools
                     notification = new { title, body }
                 };
 
-                var jsonBody = JsonConvert.SerializeObject(data);
-
                 using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://fcm.googleapis.com/fcm/send"))
                 {
                     httpRequest.Headers.TryAddWithoutValidation("Authorization", serverKey);
                     httpRequest.Headers.TryAddWithoutValidation("Sender", senderId);
-                    httpRequest.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+                    httpRequest.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
 
                     using (var httpClient = new HttpClient())
                     {
@@ -69,11 +69,7 @@ namespace GigFinder.Tools
                         if (result.IsSuccessStatusCode)
                             return true;
                         else
-                        {
-                            // Use result.StatusCode to handle failure
-                            // Your custom error handler here
                             Console.WriteLine($"Error sending notification. Status Code: {result.StatusCode}");
-                        }
                     }
                 }
             }

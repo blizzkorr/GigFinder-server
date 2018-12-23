@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GigFinder.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitalCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -283,6 +283,8 @@ namespace GigFinder.Migrations
                 name: "Participations",
                 columns: table => new
                 {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     EventId = table.Column<int>(nullable: false),
                     ArtistId = table.Column<int>(nullable: false),
                     Conditions = table.Column<string>(nullable: true),
@@ -291,7 +293,7 @@ namespace GigFinder.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Participations", x => new { x.EventId, x.ArtistId });
+                    table.PrimaryKey("PK_Participations", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Participations_Users_ArtistId",
                         column: x => x.ArtistId,
@@ -414,6 +416,11 @@ namespace GigFinder.Migrations
                 name: "IX_Participations_ArtistId",
                 table: "Participations",
                 column: "ArtistId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Participations_EventId",
+                table: "Participations",
+                column: "EventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Picture_ArtistId",

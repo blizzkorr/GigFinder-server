@@ -9,6 +9,7 @@ namespace GigFinder.Models
 {
     public class Participation
     {
+        public int Id { get; set; }
         public int EventId { get; set; }
         public int ArtistId { get; set; }
         public string Conditions { get; set; }
@@ -25,7 +26,7 @@ namespace GigFinder.Models
     {
         public void Configure(EntityTypeBuilder<Participation> builder)
         {
-            builder.HasKey(p => new { p.EventId, p.ArtistId });
+            builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Accepted).HasDefaultValue(false).IsRequired();
             builder.Property(p => p.Timestamp).IsRowVersion();

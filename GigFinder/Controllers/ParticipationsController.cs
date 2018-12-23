@@ -25,8 +25,15 @@ namespace GigFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Participation>>> GetParticipations(int? @event, int? host, int? artist)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+
+            if (!@event.HasValue && !host.HasValue && !artist.HasValue)
+                return await _context.Participations.Where(p => p.ArtistId == authorizedUser.Value.Id || p.Event.HostId == authorizedUser.Value.Id).ToListAsync();
 
             var query = _context.Participations;
             if (@event.HasValue)
@@ -49,9 +56,7 @@ namespace GigFinder.Controllers
             var participation = await _context.Participations.FindAsync(id);
 
             if (participation == null)
-            {
                 return NotFound();
-            }
 
             return participation;
         }
@@ -60,13 +65,18 @@ namespace GigFinder.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutParticipation(int id, Participation participation)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
 
-            if (id != participation.EventId)
-            {
+            var @event = await _context.Events.FindAsync(participation.EventId);
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (!(participation.ArtistId == authorizedUser.Value.Id || @event.HostId == authorizedUser.Value.Id))
+                return Unauthorized();
+            if (id != participation.Id)
                 return BadRequest();
-            }
 
             _context.Entry(participation).State = EntityState.Modified;
 
@@ -77,13 +87,9 @@ namespace GigFinder.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!ParticipationExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -93,7 +99,15 @@ namespace GigFinder.Controllers
         [HttpPost]
         public async Task<ActionResult<Participation>> PostParticipation(Participation participation)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            var @event = await _context.Events.FindAsync(participation.EventId);
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (!(participation.ArtistId == authorizedUser.Value.Id || @event.HostId == authorizedUser.Value.Id))
                 return Unauthorized();
             
             _context.Participations.Add(participation);
@@ -103,31 +117,30 @@ namespace GigFinder.Controllers
             }
             catch (DbUpdateException)
             {
-                if (ParticipationExists(participation.EventId))
-                {
+                if (ParticipationExists(participation.Id))
                     return Conflict();
-                }
                 else
-                {
                     throw;
-                }
             }
 
-            return CreatedAtAction("GetParticipation", new { id = participation.EventId }, participation);
+            return CreatedAtAction("GetParticipation", new { id = participation.Id }, participation);
         }
 
         // DELETE: api/Participations/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Participation>> DeleteParticipation(int id)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
-
+            
             var participation = await _context.Participations.FindAsync(id);
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (!(participation.ArtistId == authorizedUser.Value.Id || participation.Event.HostId == authorizedUser.Value.Id))
+                return Unauthorized();
             if (participation == null)
-            {
                 return NotFound();
-            }
 
             _context.Participations.Remove(participation);
             await _context.SaveChangesAsync();
@@ -137,7 +150,7 @@ namespace GigFinder.Controllers
 
         private bool ParticipationExists(int id)
         {
-            return _context.Participations.Any(e => e.EventId == id);
+            return _context.Participations.Any(e => e.Id == id);
         }
     }
 }

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GigFinder.Migrations
 {
     [DbContext(typeof(GigFinderContext))]
-    [Migration("20181222130330_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20181223184842_InitalCreate")]
+    partial class InitalCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -190,23 +190,28 @@ namespace GigFinder.Migrations
 
             modelBuilder.Entity("GigFinder.Models.Participation", b =>
                 {
-                    b.Property<int>("EventId");
-
-                    b.Property<int>("ArtistId");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<bool>("Accepted")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(false);
 
+                    b.Property<int>("ArtistId");
+
                     b.Property<string>("Conditions");
+
+                    b.Property<int>("EventId");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
 
-                    b.HasKey("EventId", "ArtistId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ArtistId");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("Participations");
                 });

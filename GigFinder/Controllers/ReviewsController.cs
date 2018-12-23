@@ -25,8 +25,15 @@ namespace GigFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Review>>> GetReviews(int? host, int? artist)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+
+            if (!host.HasValue && !artist.HasValue)
+                return await _context.Reviews.Where(r => r.AuthorId == authorizedUser.Value.Id).ToListAsync();
             
             var query = _context.Reviews;
             if (host.HasValue)
@@ -47,9 +54,7 @@ namespace GigFinder.Controllers
             var review = await _context.Reviews.FindAsync(id);
 
             if (review == null)
-            {
                 return NotFound();
-            }
 
             return review;
         }
@@ -58,13 +63,16 @@ namespace GigFinder.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReview(int id, Review review)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
 
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (review.AuthorId != authorizedUser.Value.Id)
+                return Unauthorized();
             if (id != review.Id)
-            {
                 return BadRequest();
-            }
 
             _context.Entry(review).State = EntityState.Modified;
 
@@ -75,13 +83,9 @@ namespace GigFinder.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!ReviewExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -91,7 +95,13 @@ namespace GigFinder.Controllers
         [HttpPost]
         public async Task<ActionResult<Review>> PostReview(Review review)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (review.AuthorId != authorizedUser.Value.Id)
                 return Unauthorized();
 
             _context.Reviews.Add(review);
@@ -104,14 +114,19 @@ namespace GigFinder.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Review>> DeleteReview(int id)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
                 return Unauthorized();
 
             var review = await _context.Reviews.FindAsync(id);
+
+            if (review.AuthorId != authorizedUser.Value.Id)
+                return Unauthorized();
             if (review == null)
-            {
                 return NotFound();
-            }
 
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();

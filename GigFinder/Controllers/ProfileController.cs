@@ -21,7 +21,7 @@ namespace GigFinder.Controllers
             _context = context;
         }
 
-        // GET: api/Profiles
+        // GET: api/Profile
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetProfiles()
         {

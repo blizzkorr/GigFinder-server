@@ -25,8 +25,15 @@ namespace GigFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvents(GeoPoint location, int? genre, int? host, int? artist)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+
+            if (location == null && !genre.HasValue && !host.HasValue && !artist.HasValue)
+                return await _context.Events.Where(e => e.HostId == authorizedUser.Value.Id || e.Participations.Any(p => p.ArtistId == authorizedUser.Value.Id)).ToListAsync();
 
             var query = _context.Events;
             // consider location
@@ -93,7 +100,13 @@ namespace GigFinder.Controllers
         [HttpPost]
         public async Task<ActionResult<Event>> PostEvent(Event @event)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (@event.HostId != authorizedUser.Value.Id)
                 return Unauthorized();
 
             _context.Events.Add(@event);

@@ -188,23 +188,28 @@ namespace GigFinder.Migrations
 
             modelBuilder.Entity("GigFinder.Models.Participation", b =>
                 {
-                    b.Property<int>("EventId");
-
-                    b.Property<int>("ArtistId");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<bool>("Accepted")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(false);
 
+                    b.Property<int>("ArtistId");
+
                     b.Property<string>("Conditions");
+
+                    b.Property<int>("EventId");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
 
-                    b.HasKey("EventId", "ArtistId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ArtistId");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("Participations");
                 });
