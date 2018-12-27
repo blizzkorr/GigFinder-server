@@ -20,15 +20,11 @@ namespace GigFinder.Tools
 
         public static async Task<bool> AuthenticateAsync(HttpRequest httpRequest)
         {
-            return true;
-
             return await GoogleServices.ValidateTokenAsync(GetIdToken(httpRequest));
         }
 
         public static async Task<ActionResult<User>> GetAuthenticatedUserAsync(GigFinderContext context, HttpRequest httpRequest)
         {
-            return context.Users.FirstOrDefault();
-
             var payload = await GoogleServices.GetTokenPayloadAsync(GetIdToken(httpRequest));
             if (payload == null)
                 return new UnauthorizedResult();

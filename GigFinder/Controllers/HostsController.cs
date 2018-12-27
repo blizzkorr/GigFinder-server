@@ -93,9 +93,9 @@ namespace GigFinder.Controllers
             if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
-            //var payload = await GoogleServices.GetTokenPayloadAsync(Request.Headers["Authorization"].First());
-            //if (string.IsNullOrEmpty(host.GoogleIdToken))
-            //    host.GoogleIdToken = payload.JwtId;
+            var payload = await GoogleServices.GetTokenPayloadAsync(Request.Headers["Authorization"].First());
+            if (string.IsNullOrEmpty(host.GoogleIdToken))
+                host.GoogleIdToken = payload.JwtId;
 
             _context.Hosts.Add(host);
             await _context.SaveChangesAsync();
