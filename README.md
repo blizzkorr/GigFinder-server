@@ -1,20 +1,18 @@
-# GigFinder-server
+# GigFinder Server
 
-##REST-Interface
+## REST-Interface
 
 URL: https://gigfinder.azurewebsites.net/api/...
 Authorization token (Google id token) must be always sent in the “Authorization” header.
 For current test purposes, this feature is disabled.
 
-###.../users 
-  used for viewing profiles
+### .../users 
 	GET /users
 	  get current authenticated profile
 	GET /users/3
 	  get profile with id 3
 
-###.../artists 
-  used for viewing and editing your own artist profile
+### .../artists 
 	GET /artists
 	  get current authenticated artist profile
 	GET /artists/3
@@ -26,8 +24,7 @@ For current test purposes, this feature is disabled.
 	DELETE /artists/3
 	  delete artist profile of current authenticated user 
 	  
-###.../hosts 
-  used for viewing and editing your own host profile
+### .../hosts 
 	GET /hosts
 	  get current authenticated host profile
 	GET /hosts/3
@@ -39,7 +36,7 @@ For current test purposes, this feature is disabled.
 	DELETE /hosts/3
 	  update host profile of current authenticated user 
 
-###.../events
+### .../events
 	GET /events? location=<(double)latitude,(double)longitude>&genre=<(int)id>&host=<(int)id>&artist=<(int)id>
 	  get events for a specified location, genre, host or artist
 	GET /events/4
@@ -51,7 +48,7 @@ For current test purposes, this feature is disabled.
 	DELETE /events/4
 	  delete a specific event, current authenticated user hast to be owner
 
-###.../participants
+### .../participants
 	GET /participants?event=<(int)id>&host=<(int)id>&artist=<(int)id>
 	  get participations by event, host or artist
 	GET /participants/5
@@ -63,7 +60,7 @@ For current test purposes, this feature is disabled.
 	DELETE /participants/5
 	  delete a participation by id for the current authenticated user
 
-###.../messages 
+### .../messages 
 	GET /messages?receiver=<(int)id>
 	  get all messages by the current authenticated user, additionally by receiver
 	GET /messages/6
@@ -71,7 +68,7 @@ For current test purposes, this feature is disabled.
 	POST /messages 
 	  create a new message for the current authenticated user
 
-###.../reviews
+### .../reviews
 	GET /reviews?host=<(int)id>&artist=<(int)id>
 	  get reviews by host or artist
 	GET /reviews/7
@@ -83,7 +80,7 @@ For current test purposes, this feature is disabled.
 	DELETE /reviews/7
 	  get participations by event, host or artist
 
-###.../searchrequests
+### .../searchrequests
 	GET /searchrequests
 	  get all searchrequests for the current authenticated artist
 	GET /searchrequests/8
