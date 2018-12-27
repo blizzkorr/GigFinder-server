@@ -23,6 +23,11 @@ namespace GigFinder.Models
             ReceivedMessages = new HashSet<Message>();
             WrittenReviews = new HashSet<Review>();
         }
+
+        public void Anonymize()
+        {
+            GoogleIdToken = "";
+        }
     }
 
     public class UserConfiguration : IEntityTypeConfiguration<User>

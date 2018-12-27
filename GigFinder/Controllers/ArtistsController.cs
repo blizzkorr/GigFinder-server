@@ -12,18 +12,18 @@ namespace GigFinder.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SearchRequestsController : ControllerBase
+    public class ArtistsController : ControllerBase
     {
         private readonly GigFinderContext _context;
 
-        public SearchRequestsController(GigFinderContext context)
+        public ArtistsController(GigFinderContext context)
         {
             _context = context;
         }
 
-        // GET: api/SearchRequests
+        // GET: api/Artists
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SearchRequest>>> GetSearchRequests()
+        public async Task<ActionResult<IEnumerable<Artist>>> GetArtists()
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
@@ -31,34 +31,33 @@ namespace GigFinder.Controllers
 
             if (authorizedUser.Value == null)
                 return Unauthorized();
-            
-            return await _context.SearchRequests.Where(sr => sr.ArtistId == authorizedUser.Value.Id).ToListAsync();
+
+            return _context.Artists.Where(u => u.Id == authorizedUser.Value.Id).ForEach(u => u.Anonymize()).ToList();
         }
 
-        // GET: api/SearchRequests/5
+        // GET: api/Artists/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SearchRequest>> GetSearchRequest(int id)
+        public async Task<ActionResult<Artist>> GetArtist(int id)
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
-
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var searchRequest = await _context.SearchRequests.FindAsync(id);
+            var artist = await _context.Artists.FindAsync(id);
 
-            if (searchRequest.ArtistId != authorizedUser.Value.Id)
+            if (artist.Id != authorizedUser.Value.Id)
                 return Unauthorized();
-            if (searchRequest == null)
+            if (artist == null)
                 return NotFound();
 
-            return searchRequest;
+            return artist;
         }
 
-        // PUT: api/SearchRequests/5
+        // PUT: api/Artists/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSearchRequest(int id, SearchRequest searchRequest)
+        public async Task<IActionResult> PutArtist(int id, Artist artist)
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
@@ -66,12 +65,12 @@ namespace GigFinder.Controllers
 
             if (authorizedUser.Value == null)
                 return Unauthorized();
-            if (searchRequest.ArtistId != authorizedUser.Value.Id)
+            if (authorizedUser.Value.Id != artist.Id)
                 return Unauthorized();
-            if (id != searchRequest.Id)
+            if (id != artist.Id)
                 return BadRequest();
 
-            _context.Entry(searchRequest).State = EntityState.Modified;
+            _context.Entry(artist).State = EntityState.Modified;
 
             try
             {
@@ -79,7 +78,7 @@ namespace GigFinder.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SearchRequestExists(id))
+                if (!ArtistExists(id))
                     return NotFound();
                 else
                     throw;
@@ -87,28 +86,26 @@ namespace GigFinder.Controllers
             return Ok();
         }
 
-        // POST: api/SearchRequests
+        // POST: api/Artists
         [HttpPost]
-        public async Task<ActionResult<SearchRequest>> PostSearchRequest(SearchRequest searchRequest)
+        public async Task<IActionResult> PostEvent(Artist artist)
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
-            if (authorizedUser.Value == null)
-                return Unauthorized();
-            if (searchRequest.ArtistId != authorizedUser.Value.Id)
-                return Unauthorized();
+            //var payload = await GoogleServices.GetTokenPayloadAsync(Request.Headers["Authorization"].First());
+            //if (string.IsNullOrEmpty(artist.GoogleIdToken))
+            //    artist.GoogleIdToken = payload.JwtId;
 
-            _context.SearchRequests.Add(searchRequest);
+            _context.Artists.Add(artist);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSearchRequest", new { id = searchRequest.Id }, searchRequest);
+            return Ok();
         }
 
-        // DELETE: api/SearchRequests/5
+        // DELETE: api/Artists/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SearchRequest>> DeleteSearchRequest(int id)
+        public async Task<ActionResult<Artist>> DeleteArtist(int id)
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
@@ -117,22 +114,22 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var searchRequest = await _context.SearchRequests.FindAsync(id);
+            var artist = await _context.Artists.FindAsync(id);
 
-            if (searchRequest.ArtistId != authorizedUser.Value.Id)
+            if (authorizedUser.Value.Id != artist.Id)
                 return Unauthorized();
-            if (searchRequest == null)
+            if (artist == null)
                 return NotFound();
 
-            _context.SearchRequests.Remove(searchRequest);
+            _context.Artists.Remove(artist);
             await _context.SaveChangesAsync();
 
-            return searchRequest;
+            return artist;
         }
 
-        private bool SearchRequestExists(int id)
+        private bool ArtistExists(int id)
         {
-            return _context.SearchRequests.Any(e => e.Id == id);
+            return _context.Artists.Any(e => e.Id == id);
         }
     }
 }

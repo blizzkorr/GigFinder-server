@@ -89,8 +89,8 @@ namespace GigFinder.Controllers
         //            throw;
         //        }
         //    }
-
-        //    return NoContent();
+        
+        //    return Ok();
         //}
 
         // POST: api/Messages
