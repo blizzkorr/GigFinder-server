@@ -10,8 +10,8 @@ namespace GigFinder.Models
     public class Location 
     {
         public int Id { get; set; }
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
         public string ZipCode { get; set; }
@@ -24,6 +24,8 @@ namespace GigFinder.Models
 
         public double ComputeDistance(Location otherLocation)
         {
+            if (Longitude.HasValue && Latitude.HasValue && otherLocation.Longitude.HasValue && otherLocation.Latitude.HasValue)
+                return GeoPoint.CalculateDistance(new GeoPoint(Longitude.Value, Latitude.Value), new GeoPoint(otherLocation.Longitude.Value, otherLocation.Latitude.Value));
             return 0;
         }
     }

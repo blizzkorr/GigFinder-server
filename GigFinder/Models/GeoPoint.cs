@@ -13,6 +13,14 @@ namespace GigFinder.Models
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
+        public GeoPoint() { }
+
+        public GeoPoint(double longitude, double latitude)
+        {
+            Longitude = longitude;
+            Latitude = latitude;
+        }
+
         public static bool TryParse(string s, out GeoPoint result)
         {
             result = null;
@@ -27,6 +35,20 @@ namespace GigFinder.Models
                 return true;
             }
             return false;
+        }
+
+        public static double CalculateDistance(GeoPoint pointA, GeoPoint pointB)
+        {
+            double theDistance = (Math.Sin(ConvertToRadians(pointA.Latitude)) * Math.Sin(ConvertToRadians(pointB.Latitude)) +
+                    Math.Cos(ConvertToRadians(pointA.Latitude)) * Math.Cos(ConvertToRadians(pointB.Latitude)) *
+                    Math.Cos(ConvertToRadians(pointA.Longitude - pointB.Longitude)));
+
+            return ConvertToRadians(Math.Acos(theDistance)) * 69.09D * 1.6093D;
+        }
+
+        public static double ConvertToRadians(double angle)
+        {
+            return (Math.PI / 180) * angle;
         }
     }
 
