@@ -109,6 +109,9 @@ namespace GigFinder.Controllers
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
 
+            if (message != null)
+                Task.Run(() => NotifyReceiver(message));
+
             return CreatedAtAction("GetMessage", new { id = message.Id }, message);
         }
 
@@ -130,6 +133,14 @@ namespace GigFinder.Controllers
 
         //    return message;
         //}
+
+        private async Task NotifyReceiver(Message message)
+        {
+            if (message == null)
+                throw new ArgumentNullException(nameof(message));
+
+            await GoogleServices.SendFCMAsync("to", $"New message from {message.Author.Name}", "body");
+        }
 
         private bool MessageExists(int id)
         {

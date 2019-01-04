@@ -21,6 +21,11 @@ namespace GigFinder.Models
         public byte[] Timestamp { get; set; }
 
         public Location() { }
+
+        public double ComputeDistance(Location otherLocation)
+        {
+            return 0;
+        }
     }
 
     public class LocationConfiguration : IEntityTypeConfiguration<Location>

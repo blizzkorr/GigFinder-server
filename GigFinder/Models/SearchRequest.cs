@@ -23,6 +23,16 @@ namespace GigFinder.Models
         {
             Genres = new HashSet<Genre>();
         }
+
+        public bool IsEventInRadius(Event @event)
+        {
+            if (this == null)
+                throw new ArgumentNullException();
+            if (@event == null)
+                throw new ArgumentNullException(nameof(@event));
+
+            return Radius <= Location.ComputeDistance(@event.Location);
+        }
     }
 
     public class SearchRequestConfiguration : IEntityTypeConfiguration<SearchRequest>

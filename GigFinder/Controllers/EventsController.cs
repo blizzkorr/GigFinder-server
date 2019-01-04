@@ -111,6 +111,9 @@ namespace GigFinder.Controllers
             _context.Events.Add(@event);
             await _context.SaveChangesAsync();
 
+            if (@event != null)
+                Task.Run(() => NotifySearchRequests(@event));
+
             return CreatedAtAction("GetEvent", new { id = @event.Id }, @event);
         }
 
@@ -136,6 +139,16 @@ namespace GigFinder.Controllers
             await _context.SaveChangesAsync();
 
             return @event;
+        }
+
+        private async Task NotifySearchRequests(Event @event)
+        {
+            if (@event == null)
+                throw new ArgumentNullException(nameof(@event));
+
+            foreach (var searchRequest in _context.SearchRequests)
+                if (searchRequest.IsEventInRadius(@event))
+                    await GoogleServices.SendFCMAsync("to", "New event in your search area", "body");
         }
 
         private bool EventExists(int id)
