@@ -45,10 +45,8 @@ namespace GigFinder.Tools
         {
             try
             {
-                // Get the server key from FCM console
-                var serverKey = string.Format("key={0}", "Your server key - use app config");
-                // Get the sender id from FCM console
-                var senderId = string.Format("id={0}", "Your sender id - use app config");
+                var serverKey = $"key={""}";
+                var senderId = $"id={""}";
 
                 var data = new
                 {

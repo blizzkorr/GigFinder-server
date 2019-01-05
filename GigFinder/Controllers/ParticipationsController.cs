@@ -113,6 +113,8 @@ namespace GigFinder.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                // Notify Host or Artist
             }
             catch (DbUpdateException)
             {
@@ -143,6 +145,8 @@ namespace GigFinder.Controllers
 
             _context.Participations.Remove(participation);
             await _context.SaveChangesAsync();
+
+            // Notify Host or Artist
 
             return participation;
         }
