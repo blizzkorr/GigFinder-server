@@ -29,7 +29,7 @@ namespace GigFinder.Tools
             if (payload == null)
                 return new UnauthorizedResult();
 
-            return context.Users.SingleOrDefault(u => u.GoogleIdToken == payload.JwtId);
+            return context.Users.SingleOrDefault(u => u.GoogleIdToken == payload.Subject);
         }
     }
 }
