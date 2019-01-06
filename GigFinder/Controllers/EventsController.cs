@@ -32,6 +32,8 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
+            DBInitializer.Run();
+
             if (location == null && !genre.HasValue && !host.HasValue && !artist.HasValue)
                 return await _context.Events.Where(e => e.HostId == authorizedUser.Value.Id || e.Participations.Any(p => p.ArtistId == authorizedUser.Value.Id)).ToListAsync();
 
