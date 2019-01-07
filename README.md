@@ -6,12 +6,6 @@ URL: https://gigfinder.azurewebsites.net/api/...
 Authorization token (Google id token) must be always sent in the “Authorization” header.
 For current test purposes, this feature is disabled.
 
-### .../users 
-	GET /users
-	  get current authenticated profile
-	GET /users/3
-	  get profile with id 3
-
 ### .../artists 
 	GET /artists
 	  get current authenticated artist profile
@@ -37,7 +31,7 @@ For current test purposes, this feature is disabled.
 	  update host profile of current authenticated user 
 
 ### .../events
-	GET /events? location=<(double)latitude,(double)longitude>&genre=<(int)id>&host=<(int)id>&artist=<(int)id>
+	GET /events?location=<(double)latitude,(double)longitude>&radius=<(double)radius>&genre=<(int)id>&host=<(int)id>&artist=<(int)id>
 	  get events for a specified location, genre, host or artist
 	GET /events/4
 	  get event with id 4
@@ -47,6 +41,18 @@ For current test purposes, this feature is disabled.
 	  update a specific event, current authenticated user hast to be owner
 	DELETE /events/4
 	  delete a specific event, current authenticated user hast to be owner
+
+### .../pictures
+	GET /pictures?event=<(int)id>&host=<(int)id>&artist=<(int)id>
+	  get pictures for a specified event, host or artist
+	GET /pictures/4
+	  get picture with id 4
+	POST /pictures
+	  create new picture for current authenticated user
+	PUT /pictures/4
+	  update a specific picture, current authenticated user hast to be owner
+	DELETE /pictures/4
+	  delete a specific picture, current authenticated user hast to be owner
 
 ### .../participants
 	GET /participants?event=<(int)id>&host=<(int)id>&artist=<(int)id>
