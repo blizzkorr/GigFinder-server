@@ -12,13 +12,14 @@ namespace GigFinder.Tools
         {
             using (var context = new GigFinderContext())
             {
-                if (context.Events.Any())
-                    return;
+                if (!context.Events.Any())
+                    InitEventAsync(context);
 
-                //InitGenreAsync(context);
-                //InitSocialMediaAsync(context);
+                if (!context.Genre.Any())
+                    InitGenreAsync(context);
 
-                InitEventAsync(context);
+                //if (!context.SocialMedias.Any())
+                //    InitSocialMediaAsync(context);
             }
         }
 
@@ -34,16 +35,13 @@ namespace GigFinder.Tools
                 {
                     Name = "Test Host",
                     Description = "Best club in Munich",
-                    GoogleIdToken = "t454151313135131",
-                    BackgroundColor = "ffffff",
-                    Location = new Location()
+                    UserId = new UserID()
                     {
-                        Country = "Germany",
-                        City = "Munich",
-                        ZipCode = "80000",
-                        Street = "Maximiliansstraße",
-                        HouseNumber = "524"
-                    }
+                        GoogleIdToken = "t454151313135131"
+                    },
+                    BackgroundColor = "ffffff",
+                    Longitude = 48.1548895,
+                    Latitude = 11.4717964
                 });
 
                 await context.SaveChangesAsync();
@@ -54,7 +52,8 @@ namespace GigFinder.Tools
             {
                 Title = "München Test rockt!!",
                 Description = "Alljährliches test rock",
-                LocationId = host.DefaultLocationId,
+                Longitude = 48.1548895,
+                Latitude = 11.4717964,
                 Start = new DateTime(2019, 02, 02, 18, 00, 00),
                 End = new DateTime(2019, 02, 02, 23, 59, 59),
                 HostId = host.Id
@@ -63,7 +62,8 @@ namespace GigFinder.Tools
             {
                 Title = "München Test rockt!!",
                 Description = "I don't know",
-                LocationId = host.DefaultLocationId,
+                Longitude = 48.1548895,
+                Latitude = 11.4717964,
                 Start = new DateTime(2019, 01, 31, 14, 00, 00),
                 End = new DateTime(2019, 01, 31, 22, 00, 00),
                 HostId = host.Id
@@ -80,35 +80,35 @@ namespace GigFinder.Tools
             context.Genre.Add(new Genre()
             {
                 Value = "Alternative Rock",
-                //SubGenres = {
-                //    new Genre()
-                //    {
-                //        Value = "Britpop",
-                //        SubGenres = { new Genre() { Value = "Post-Britpop" } }
-                //    },
-                //    new Genre()
-                //    {
-                //        Value = "Dream pop",
-                //        SubGenres = { new Genre() { Value = "Shoegaze" } }
-                //    },
-                //    new Genre()
-                //    {
-                //        Value = "Grunge",
-                //        SubGenres = { new Genre() { Value = "Post-grunge" } }
-                //    },
-                //    new Genre()
-                //    {
-                //        Value = "Indie rock",
-                //        SubGenres =
-                //        {
-                //            new Genre() { Value = "Dunedin sound" },
-                //            new Genre() { Value = "Math rock" },
-                //            new Genre() { Value = "Post-punk revival" },
-                //            new Genre() { Value = "Sadcore" },
-                //            new Genre() { Value = "Slowcore" }
-                //        }
-                //    }
-                //}
+                SubGenres = {
+                    new Genre()
+                    {
+                        Value = "Britpop",
+                        SubGenres = { new Genre() { Value = "Post-Britpop" } }
+                    },
+                    new Genre()
+                    {
+                        Value = "Dream pop",
+                        SubGenres = { new Genre() { Value = "Shoegaze" } }
+                    },
+                    new Genre()
+                    {
+                        Value = "Grunge",
+                        SubGenres = { new Genre() { Value = "Post-grunge" } }
+                    },
+                    new Genre()
+                    {
+                        Value = "Indie rock",
+                        SubGenres =
+                        {
+                            new Genre() { Value = "Dunedin sound" },
+                            new Genre() { Value = "Math rock" },
+                            new Genre() { Value = "Post-punk revival" },
+                            new Genre() { Value = "Sadcore" },
+                            new Genre() { Value = "Slowcore" }
+                        }
+                    }
+                }
             });
             context.Genre.Add(new Genre() { Value = "Beat music" });
             context.Genre.Add(new Genre() { Value = "Christian rock" });
@@ -116,9 +116,9 @@ namespace GigFinder.Tools
             context.Genre.Add(new Genre()
             {
                 Value = "Electronic rock",
-                //SubGenres = {
-                //    new Genre() { Value = "Electronicore" }
-                //}
+                SubGenres = {
+                    new Genre() { Value = "Electronicore" }
+                }
             });
 
             await context.SaveChangesAsync();

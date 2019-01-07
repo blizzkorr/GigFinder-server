@@ -12,20 +12,22 @@ namespace GigFinder.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public int LocationId { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public int HostId { get; set; }
         public byte[] Timestamp { get; set; }
 
         public virtual Host Host { get; set; }
-        public virtual Location Location { get; set; }
         public virtual ICollection<Genre> Genres { get; set; }
+        public virtual ICollection<Picture> Pictures { get; set; }
         public virtual ICollection<Participation> Participations { get; set; }
 
         public Event()
         {
             Genres = new HashSet<Genre>();
+            Pictures = new HashSet<Picture>();
             Participations = new HashSet<Participation>();
         }
     }
@@ -40,13 +42,14 @@ namespace GigFinder.Models
 
             builder.Property(e => e.Title).IsRequired();
             builder.Property(e => e.Description).IsRequired();
+            builder.Property(e => e.Longitude).IsRequired();
+            builder.Property(e => e.Latitude).IsRequired();
             builder.Property(e => e.Start).IsRequired();
             builder.Property(e => e.End).IsRequired();
             builder.Property(e => e.Timestamp).IsRowVersion();
 
             builder.HasOne(e => e.Host).WithMany(h => h.Events).HasForeignKey(e => e.HostId).IsRequired();
-            builder.HasOne(e => e.Location).WithMany().HasForeignKey(e => e.LocationId).IsRequired();
-            builder.HasMany(a => a.Genres).WithOne().IsRequired();
+            builder.HasMany(e => e.Genres).WithOne().IsRequired();
         }
     }
 }

@@ -7,13 +7,19 @@ using System.Threading.Tasks;
 
 namespace GigFinder.Models
 {
-    public class Host : User
+    public class Host
     {
-        public int DefaultLocationId { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int? ProfilePictureId { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
         public string BackgroundColor { get; set; }
         public byte[] Timestamp { get; set; }
 
-        public virtual Location Location { get; set; }
+        public virtual UserID UserId { get; set; }
+        public virtual Picture ProfilePicture { get; set; }
         public virtual ICollection<Genre> DefaultGenres { get; set; }
         public virtual ICollection<HostSocialMedia> HostSocialMedias { get; set; }
         public virtual ICollection<Event> Events { get; set; }
@@ -34,12 +40,16 @@ namespace GigFinder.Models
     {
         public void Configure(EntityTypeBuilder<Host> builder)
         {
-            builder.HasBaseType<User>();
+            builder.HasKey(h => h.Id);
 
+            builder.Property(h => h.Name).IsRequired();
+            builder.Property(h => h.Description).IsRequired();
+            builder.Property(h => h.Longitude).IsRequired();
+            builder.Property(h => h.Latitude).IsRequired();
             builder.Property(h => h.BackgroundColor).HasMaxLength(6).IsFixedLength().IsRequired();
             builder.Property(h => h.Timestamp).IsRowVersion();
 
-            builder.HasOne(h => h.Location).WithOne().HasForeignKey<Host>(h => h.DefaultLocationId).IsRequired();
+            builder.HasOne(h => h.ProfilePicture).WithOne().HasForeignKey<Host>(h => h.ProfilePictureId);
             builder.HasMany(h => h.DefaultGenres).WithOne().IsRequired();
         }
     }
