@@ -12,18 +12,18 @@ namespace GigFinder.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ArtistsController : ControllerBase
+    public class FavoritesController : ControllerBase
     {
         private readonly GigFinderContext _context;
 
-        public ArtistsController(GigFinderContext context)
+        public FavoritesController(GigFinderContext context)
         {
             _context = context;
         }
 
-        // GET: api/Artists
+        // GET: api/Favorites
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Artist>>> GetArtists()
+        public async Task<ActionResult<IEnumerable<Favorite>>> GetFavorites()
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
@@ -32,13 +32,12 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            return await _context.Artists.Include(a => a.ArtistSocialMedias)
-                .Where(u => u.Id == authorizedUser.Value.Id).ToListAsync();
+            return await _context.Favorites.Include(f => f.Host).Where(f => f.ArtistId == authorizedUser.Value.Id).ToListAsync();
         }
 
-        // GET: api/Artists/5
+        // GET: api/Favorites/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Artist>> GetArtist(int id)
+        public async Task<ActionResult<Favorite>> GetFavorite(int id)
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
@@ -46,19 +45,19 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var artist = await _context.Artists.Include(a => a.ArtistSocialMedias).SingleOrDefaultAsync(a => a.Id == id);
+            var favorite = await _context.Favorites.Include(f => f.Host).SingleOrDefaultAsync(f => f.Id == id);
 
-            if (artist == null)
+            if (favorite == null)
                 return NotFound();
-            if (artist.Id != authorizedUser.Value.Id)
+            if (favorite.ArtistId != authorizedUser.Value.Id)
                 return Unauthorized();
 
-            return artist;
+            return favorite;
         }
 
-        // PUT: api/Artists/5
+        // PUT: api/Favorites/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutArtist(int id, Artist artist)
+        public async Task<IActionResult> PutFavorite(int id, Favorite favorite)
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
@@ -66,12 +65,12 @@ namespace GigFinder.Controllers
 
             if (authorizedUser.Value == null)
                 return Unauthorized();
-            if (authorizedUser.Value.Id != artist.Id)
+            if (favorite.ArtistId != authorizedUser.Value.Id)
                 return Unauthorized();
-            if (id != artist.Id)
+            if (id != favorite.Id)
                 return BadRequest();
 
-            _context.Entry(artist).State = EntityState.Modified;
+            _context.Entry(favorite).State = EntityState.Modified;
 
             try
             {
@@ -79,7 +78,7 @@ namespace GigFinder.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ArtistExists(id))
+                if (!FavoriteExists(id))
                     return NotFound();
                 else
                     throw;
@@ -87,29 +86,28 @@ namespace GigFinder.Controllers
             return Ok();
         }
 
-        // POST: api/Artists
+        // POST: api/Favorites
         [HttpPost]
-        public async Task<IActionResult> PostArtist(Artist artist)
+        public async Task<ActionResult<Favorite>> PostFavorite(Favorite favorite)
         {
-            if (!Authentication.AuthenticateAsync(Request).Result)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
 
-            var payload = await GoogleServices.GetTokenPayloadAsync(Request.Headers["Authorization"].First());
-            UserID existingUser = _context.UserIDs.SingleOrDefault(u => u.GoogleIdToken == payload.Subject);
-            if (existingUser != null)
-                artist.UserId = existingUser;
-            else
-                artist.UserId = new UserID() { GoogleIdToken = payload.Subject };
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (favorite.ArtistId != authorizedUser.Value.Id)
+                return Unauthorized();
 
-            _context.Artists.Add(artist);
+            _context.Favorites.Add(favorite);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return CreatedAtAction("GetFavorite", new { id = favorite.Id }, favorite);
         }
 
-        // DELETE: api/Artists/5
+        // DELETE: api/Favorites/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Artist>> DeleteArtist(int id)
+        public async Task<ActionResult<Favorite>> DeleteFavorite(int id)
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
@@ -118,24 +116,22 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var artist = await _context.Artists.FindAsync(id);
+            var favorite = await _context.Favorites.FindAsync(id);
 
-            if (authorizedUser.Value.Id != artist.Id)
-                return Unauthorized();
-            if (artist == null)
+            if (favorite == null)
                 return NotFound();
+            if (favorite.ArtistId != authorizedUser.Value.Id)
+                return Unauthorized();
 
-            _context.Artists.Remove(artist);
-            if (authorizedUser.Value.Host == null)
-                _context.UserIDs.Remove(authorizedUser.Value);
+            _context.Favorites.Remove(favorite);
             await _context.SaveChangesAsync();
 
-            return artist;
+            return favorite;
         }
 
-        private bool ArtistExists(int id)
+        private bool FavoriteExists(int id)
         {
-            return _context.Artists.Any(e => e.Id == id);
+            return _context.Favorites.Any(e => e.Id == id);
         }
     }
 }

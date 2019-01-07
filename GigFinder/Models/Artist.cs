@@ -12,7 +12,7 @@ namespace GigFinder.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int ProfilePictureId { get; set; }
+        public int? ProfilePictureId { get; set; }
         public string BackgroundColor { get; set; }
         public byte[] Timestamp { get; set; }
 
@@ -23,6 +23,7 @@ namespace GigFinder.Models
         public virtual ICollection<Participation> Participations { get; set; }
         public virtual ICollection<Picture> Pictures { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
+        public virtual ICollection<Favorite> Favorites { get; set; }
         public virtual ICollection<SearchRequest> SearchRequests { get; set; }
 
         public Artist()

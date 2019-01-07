@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GigFinder.Models;
+using GigFinder.Tools;
 
 namespace GigFinder.Controllers
 {
@@ -22,21 +23,40 @@ namespace GigFinder.Controllers
 
         // GET: api/Pictures
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Picture>>> GetPicture()
+        public async Task<ActionResult<IEnumerable<Picture>>> GetPicture(int? @event, int? host, int? artist)
         {
-            return await _context.Picture.ToListAsync();
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+
+            if (@event.HasValue)
+                return await _context.Picture.Where(p => p.EventId == @event.Value).ToListAsync();
+            else if (host.HasValue)
+                return await _context.Picture.Where(p => p.HostId == host.Value).ToListAsync();
+            else if (artist.HasValue)
+                return await _context.Picture.Where(p => p.ArtistId == artist.Value).ToListAsync();
+            else
+                return BadRequest();
         }
 
         // GET: api/Pictures/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Picture>> GetPicture(int id)
         {
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+
             var picture = await _context.Picture.FindAsync(id);
 
             if (picture == null)
-            {
                 return NotFound();
-            }
 
             return picture;
         }
@@ -45,10 +65,26 @@ namespace GigFinder.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPicture(int id, Picture picture)
         {
-            if (id != picture.Id)
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (picture.ArtistId.HasValue && picture.ArtistId != authorizedUser.Value.Id)
+                return Unauthorized();
+            else if (picture.HostId.HasValue && picture.ArtistId != authorizedUser.Value.Id)
+                return Unauthorized();
+            else if (picture.EventId.HasValue)
             {
-                return BadRequest();
+                Event @event = await _context.Events.FindAsync(picture.EventId.Value);
+                if (@event == null)
+                    return BadRequest();
+                else if (@event.HostId != authorizedUser.Value.Id)
+                    return Unauthorized();
             }
+            if (id != picture.Id)
+                return BadRequest();
 
             _context.Entry(picture).State = EntityState.Modified;
 
@@ -59,22 +95,36 @@ namespace GigFinder.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!PictureExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
-
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Pictures
         [HttpPost]
         public async Task<ActionResult<Picture>> PostPicture(Picture picture)
         {
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+            if (picture.ArtistId.HasValue && picture.ArtistId != authorizedUser.Value.Id)
+                return Unauthorized();
+            else if (picture.HostId.HasValue && picture.ArtistId != authorizedUser.Value.Id)
+                return Unauthorized();
+            else if (picture.EventId.HasValue)
+            {
+                Event @event = await _context.Events.FindAsync(picture.EventId.Value);
+                if (@event == null)
+                    return BadRequest();
+                else if (@event.HostId != authorizedUser.Value.Id)
+                    return Unauthorized();
+            }
+
             _context.Picture.Add(picture);
             await _context.SaveChangesAsync();
 
@@ -85,10 +135,28 @@ namespace GigFinder.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Picture>> DeletePicture(int id)
         {
+            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
+            if (authorizedUser.Result is UnauthorizedResult)
+                return Unauthorized();
+
+            if (authorizedUser.Value == null)
+                return Unauthorized();
+
             var picture = await _context.Picture.FindAsync(id);
+
             if (picture == null)
-            {
                 return NotFound();
+            if (picture.ArtistId.HasValue && picture.ArtistId != authorizedUser.Value.Id)
+                return Unauthorized();
+            else if (picture.HostId.HasValue && picture.ArtistId != authorizedUser.Value.Id)
+                return Unauthorized();
+            else if (picture.EventId.HasValue)
+            {
+                Event @event = await _context.Events.FindAsync(picture.EventId.Value);
+                if (@event == null)
+                    return BadRequest();
+                else if (@event.HostId != authorizedUser.Value.Id)
+                    return Unauthorized();
             }
 
             _context.Picture.Remove(picture);

@@ -126,6 +126,8 @@ namespace GigFinder.Controllers
                 return NotFound();
 
             _context.Hosts.Remove(host);
+            if (authorizedUser.Value.Artist == null)
+                _context.UserIDs.Remove(authorizedUser.Value);
             await _context.SaveChangesAsync();
 
             return host;

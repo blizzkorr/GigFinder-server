@@ -12,13 +12,14 @@ namespace GigFinder.Tools
         {
             using (var context = new GigFinderContext())
             {
-                if (context.Events.Any())
-                    return;
+                if (!context.Events.Any())
+                    InitEventAsync(context);
 
-                //InitGenreAsync(context);
-                //InitSocialMediaAsync(context);
+                if (!context.Genre.Any())
+                    InitGenreAsync(context);
 
-                InitEventAsync(context);
+                //if (!context.SocialMedias.Any())
+                //    InitSocialMediaAsync(context);
             }
         }
 
@@ -79,35 +80,35 @@ namespace GigFinder.Tools
             context.Genre.Add(new Genre()
             {
                 Value = "Alternative Rock",
-                //SubGenres = {
-                //    new Genre()
-                //    {
-                //        Value = "Britpop",
-                //        SubGenres = { new Genre() { Value = "Post-Britpop" } }
-                //    },
-                //    new Genre()
-                //    {
-                //        Value = "Dream pop",
-                //        SubGenres = { new Genre() { Value = "Shoegaze" } }
-                //    },
-                //    new Genre()
-                //    {
-                //        Value = "Grunge",
-                //        SubGenres = { new Genre() { Value = "Post-grunge" } }
-                //    },
-                //    new Genre()
-                //    {
-                //        Value = "Indie rock",
-                //        SubGenres =
-                //        {
-                //            new Genre() { Value = "Dunedin sound" },
-                //            new Genre() { Value = "Math rock" },
-                //            new Genre() { Value = "Post-punk revival" },
-                //            new Genre() { Value = "Sadcore" },
-                //            new Genre() { Value = "Slowcore" }
-                //        }
-                //    }
-                //}
+                SubGenres = {
+                    new Genre()
+                    {
+                        Value = "Britpop",
+                        SubGenres = { new Genre() { Value = "Post-Britpop" } }
+                    },
+                    new Genre()
+                    {
+                        Value = "Dream pop",
+                        SubGenres = { new Genre() { Value = "Shoegaze" } }
+                    },
+                    new Genre()
+                    {
+                        Value = "Grunge",
+                        SubGenres = { new Genre() { Value = "Post-grunge" } }
+                    },
+                    new Genre()
+                    {
+                        Value = "Indie rock",
+                        SubGenres =
+                        {
+                            new Genre() { Value = "Dunedin sound" },
+                            new Genre() { Value = "Math rock" },
+                            new Genre() { Value = "Post-punk revival" },
+                            new Genre() { Value = "Sadcore" },
+                            new Genre() { Value = "Slowcore" }
+                        }
+                    }
+                }
             });
             context.Genre.Add(new Genre() { Value = "Beat music" });
             context.Genre.Add(new Genre() { Value = "Christian rock" });
@@ -115,9 +116,9 @@ namespace GigFinder.Tools
             context.Genre.Add(new Genre()
             {
                 Value = "Electronic rock",
-                //SubGenres = {
-                //    new Genre() { Value = "Electronicore" }
-                //}
+                SubGenres = {
+                    new Genre() { Value = "Electronicore" }
+                }
             });
 
             await context.SaveChangesAsync();

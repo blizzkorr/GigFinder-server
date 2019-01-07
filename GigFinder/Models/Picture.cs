@@ -11,9 +11,9 @@ namespace GigFinder.Models
     {
         public int Id { get; set; }
         public byte[] Image { get; set; }
-        public int ArtistId { get; set; }
-        public int HostId { get; set; }
-        public int EventId { get; set; }
+        public int? ArtistId { get; set; }
+        public int? HostId { get; set; }
+        public int? EventId { get; set; }
         public byte[] Timestamp { get; set; }
 
         public virtual Artist Artist { get; set; }

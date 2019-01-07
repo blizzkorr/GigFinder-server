@@ -32,12 +32,12 @@ namespace GigFinder.Models
             builder.HasKey(sr => sr.Id);
 
             builder.Property(sr => sr.Radius).IsRequired();
-            builder.Property(e => e.Longitude).IsRequired();
-            builder.Property(e => e.Latitude).IsRequired();
+            builder.Property(sr => sr.Longitude).IsRequired();
+            builder.Property(sr => sr.Latitude).IsRequired();
             builder.Property(sr => sr.Timestamp).IsRowVersion();
 
             builder.HasOne(sr => sr.Artist).WithMany(a => a.SearchRequests).HasForeignKey(sr => sr.ArtistId).IsRequired();
-            builder.HasMany(a => a.Genres).WithOne().IsRequired();
+            builder.HasMany(sr => sr.Genres).WithOne().IsRequired();
         }
     }
 }

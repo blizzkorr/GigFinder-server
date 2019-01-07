@@ -28,6 +28,7 @@ namespace GigFinder.Models
             modelBuilder.ApplyConfiguration(new EventConfiguration());
             modelBuilder.ApplyConfiguration(new ParticipationConfiguration());
             modelBuilder.ApplyConfiguration(new SearchRequestConfiguration());
+            modelBuilder.ApplyConfiguration(new FavoriteConfiguration());
         }
 
         public DbSet<UserID> UserIDs { get; set; }
@@ -39,6 +40,7 @@ namespace GigFinder.Models
         public DbSet<Message> Messages { get; set; }
         public DbSet<Picture> Picture { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
         public DbSet<SearchRequest> SearchRequests { get; set; }
         public DbSet<SocialMedia> SocialMedias { get; set; }
         public DbSet<ArtistSocialMedia> ArtistSocialMedias { get; set; }

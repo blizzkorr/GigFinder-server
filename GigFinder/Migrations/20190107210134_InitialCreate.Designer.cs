@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GigFinder.Migrations
 {
     [DbContext(typeof(GigFinderContext))]
-    [Migration("20190107201210_InitialCreate")]
+    [Migration("20190107210134_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,7 @@ namespace GigFinder.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<int>("ProfilePictureId");
+                    b.Property<int?>("ProfilePictureId");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
@@ -99,6 +99,28 @@ namespace GigFinder.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("GigFinder.Models.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ArtistId");
+
+                    b.Property<int>("HostId");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtistId");
+
+                    b.HasIndex("HostId");
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("GigFinder.Models.Genre", b =>
                 {
                     b.Property<int>("Id")
@@ -110,7 +132,7 @@ namespace GigFinder.Migrations
 
                     b.Property<int>("HostId");
 
-                    b.Property<int>("ParentId");
+                    b.Property<int?>("ParentId");
 
                     b.Property<int>("SearchRequestId");
 
@@ -155,7 +177,7 @@ namespace GigFinder.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<int>("ProfilePictureId");
+                    b.Property<int?>("ProfilePictureId");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
@@ -253,11 +275,11 @@ namespace GigFinder.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ArtistId");
+                    b.Property<int?>("ArtistId");
 
-                    b.Property<int>("EventId");
+                    b.Property<int?>("EventId");
 
-                    b.Property<int>("HostId");
+                    b.Property<int?>("HostId");
 
                     b.Property<byte[]>("Image")
                         .IsRequired();
@@ -282,13 +304,13 @@ namespace GigFinder.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ArtistId");
+                    b.Property<int?>("ArtistId");
 
                     b.Property<int>("AuthorId");
 
                     b.Property<string>("Comment");
 
-                    b.Property<int>("HostId");
+                    b.Property<int?>("HostId");
 
                     b.Property<int>("Rating");
 
@@ -339,7 +361,7 @@ namespace GigFinder.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<byte[]>("Thumbnail");
+                    b.Property<int?>("ThumbnailId");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
@@ -349,6 +371,9 @@ namespace GigFinder.Migrations
                         .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ThumbnailId")
+                        .IsUnique();
 
                     b.ToTable("SocialMedias");
                 });
@@ -375,8 +400,7 @@ namespace GigFinder.Migrations
 
                     b.HasOne("GigFinder.Models.Picture", "ProfilePicture")
                         .WithOne()
-                        .HasForeignKey("GigFinder.Models.Artist", "ProfilePictureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GigFinder.Models.Artist", "ProfilePictureId");
                 });
 
             modelBuilder.Entity("GigFinder.Models.ArtistSocialMedia", b =>
@@ -400,6 +424,19 @@ namespace GigFinder.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("GigFinder.Models.Favorite", b =>
+                {
+                    b.HasOne("GigFinder.Models.Artist", "Artist")
+                        .WithMany("Favorites")
+                        .HasForeignKey("ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("GigFinder.Models.Host", "Host")
+                        .WithMany()
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("GigFinder.Models.Genre", b =>
                 {
                     b.HasOne("GigFinder.Models.Artist")
@@ -419,8 +456,7 @@ namespace GigFinder.Migrations
 
                     b.HasOne("GigFinder.Models.Genre", "Parent")
                         .WithMany("SubGenres")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ParentId");
 
                     b.HasOne("GigFinder.Models.SearchRequest")
                         .WithMany("Genres")
@@ -437,8 +473,7 @@ namespace GigFinder.Migrations
 
                     b.HasOne("GigFinder.Models.Picture", "ProfilePicture")
                         .WithOne()
-                        .HasForeignKey("GigFinder.Models.Host", "ProfilePictureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GigFinder.Models.Host", "ProfilePictureId");
                 });
 
             modelBuilder.Entity("GigFinder.Models.HostSocialMedia", b =>
@@ -484,26 +519,22 @@ namespace GigFinder.Migrations
                 {
                     b.HasOne("GigFinder.Models.Artist", "Artist")
                         .WithMany("Pictures")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ArtistId");
 
                     b.HasOne("GigFinder.Models.Event", "Event")
                         .WithMany("Pictures")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("EventId");
 
                     b.HasOne("GigFinder.Models.Host", "Host")
                         .WithMany("Pictures")
-                        .HasForeignKey("HostId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("HostId");
                 });
 
             modelBuilder.Entity("GigFinder.Models.Review", b =>
                 {
                     b.HasOne("GigFinder.Models.Artist", "Artist")
                         .WithMany("Reviews")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ArtistId");
 
                     b.HasOne("GigFinder.Models.UserID", "Author")
                         .WithMany("WrittenReviews")
@@ -512,8 +543,7 @@ namespace GigFinder.Migrations
 
                     b.HasOne("GigFinder.Models.Host", "Host")
                         .WithMany("Reviews")
-                        .HasForeignKey("HostId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("HostId");
                 });
 
             modelBuilder.Entity("GigFinder.Models.SearchRequest", b =>
@@ -522,6 +552,13 @@ namespace GigFinder.Migrations
                         .WithMany("SearchRequests")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("GigFinder.Models.SocialMedia", b =>
+                {
+                    b.HasOne("GigFinder.Models.Picture", "Thumbnail")
+                        .WithOne()
+                        .HasForeignKey("GigFinder.Models.SocialMedia", "ThumbnailId");
                 });
 #pragma warning restore 612, 618
         }

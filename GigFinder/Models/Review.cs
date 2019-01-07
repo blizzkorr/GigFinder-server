@@ -13,8 +13,8 @@ namespace GigFinder.Models
         public int AuthorId { get; set; }
         public int Rating { get; set; }
         public string Comment { get; set; }
-        public int ArtistId { get; set; }
-        public int HostId { get; set; }
+        public int? ArtistId { get; set; }
+        public int? HostId { get; set; }
         public byte[] Timestamp { get; set; }
 
         public virtual UserID Author { get; set; }

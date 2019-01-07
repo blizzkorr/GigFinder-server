@@ -38,8 +38,8 @@ namespace GigFinder.Controllers
                 return await _context.Events.Where(e => e.HostId == authorizedUser.Value.Id || e.Participations.Any(p => p.ArtistId == authorizedUser.Value.Id)).ToListAsync();
 
             var query = _context.Events;
-            //if (location != null && radius.HasValue)
-            //    query.Where(e => e.);
+            if (location != null && radius.HasValue)
+                query.Where(e => GeoPoint.CalculateDistance(location, new GeoPoint() { Longitude = e.Longitude, Latitude = e.Latitude }) <= radius.Value);
             if (genre.HasValue)
                 query.Where(e => e.Genres.Any(g => g.Id == genre));
             if (host.HasValue)

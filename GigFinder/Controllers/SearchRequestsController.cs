@@ -119,10 +119,10 @@ namespace GigFinder.Controllers
 
             var searchRequest = await _context.SearchRequests.FindAsync(id);
 
-            if (searchRequest.ArtistId != authorizedUser.Value.Id)
-                return Unauthorized();
             if (searchRequest == null)
                 return NotFound();
+            if (searchRequest.ArtistId != authorizedUser.Value.Id)
+                return Unauthorized();
 
             _context.SearchRequests.Remove(searchRequest);
             await _context.SaveChangesAsync();
