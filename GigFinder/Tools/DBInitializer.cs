@@ -34,16 +34,13 @@ namespace GigFinder.Tools
                 {
                     Name = "Test Host",
                     Description = "Best club in Munich",
-                    GoogleIdToken = "t454151313135131",
-                    BackgroundColor = "ffffff",
-                    Location = new Location()
+                    UserId = new UserID()
                     {
-                        Country = "Germany",
-                        City = "Munich",
-                        ZipCode = "80000",
-                        Street = "Maximiliansstraße",
-                        HouseNumber = "524"
-                    }
+                        GoogleIdToken = "t454151313135131"
+                    },
+                    BackgroundColor = "ffffff",
+                    Longitude = 48.1548895,
+                    Latitude = 11.4717964
                 });
 
                 await context.SaveChangesAsync();
@@ -54,7 +51,8 @@ namespace GigFinder.Tools
             {
                 Title = "München Test rockt!!",
                 Description = "Alljährliches test rock",
-                LocationId = host.DefaultLocationId,
+                Longitude = 48.1548895,
+                Latitude = 11.4717964,
                 Start = new DateTime(2019, 02, 02, 18, 00, 00),
                 End = new DateTime(2019, 02, 02, 23, 59, 59),
                 HostId = host.Id
@@ -63,7 +61,8 @@ namespace GigFinder.Tools
             {
                 Title = "München Test rockt!!",
                 Description = "I don't know",
-                LocationId = host.DefaultLocationId,
+                Longitude = 48.1548895,
+                Latitude = 11.4717964,
                 Start = new DateTime(2019, 01, 31, 14, 00, 00),
                 End = new DateTime(2019, 01, 31, 22, 00, 00),
                 HostId = host.Id

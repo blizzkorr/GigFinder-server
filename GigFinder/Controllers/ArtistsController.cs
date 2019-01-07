@@ -32,7 +32,8 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            return _context.Artists.Where(u => u.Id == authorizedUser.Value.Id).ForEach(u => u.Anonymize()).ToList();
+            return await _context.Artists.Include(a => a.ArtistSocialMedias)
+                .Where(u => u.Id == authorizedUser.Value.Id).ToListAsync();
         }
 
         // GET: api/Artists/5
@@ -45,12 +46,12 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var artist = await _context.Artists.FindAsync(id);
+            var artist = await _context.Artists.Include(a => a.ArtistSocialMedias).SingleOrDefaultAsync(a => a.Id == id);
 
-            if (artist.Id != authorizedUser.Value.Id)
-                return Unauthorized();
             if (artist == null)
                 return NotFound();
+            if (artist.Id != authorizedUser.Value.Id)
+                return Unauthorized();
 
             return artist;
         }
@@ -88,14 +89,17 @@ namespace GigFinder.Controllers
 
         // POST: api/Artists
         [HttpPost]
-        public async Task<IActionResult> PostEvent(Artist artist)
+        public async Task<IActionResult> PostArtist(Artist artist)
         {
             if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
             var payload = await GoogleServices.GetTokenPayloadAsync(Request.Headers["Authorization"].First());
-            if (string.IsNullOrEmpty(artist.GoogleIdToken))
-                artist.GoogleIdToken = payload.Subject;
+            UserID existingUser = _context.UserIDs.SingleOrDefault(u => u.GoogleIdToken == payload.Subject);
+            if (existingUser != null)
+                artist.UserId = existingUser;
+            else
+                artist.UserId = new UserID() { GoogleIdToken = payload.Subject };
 
             _context.Artists.Add(artist);
             await _context.SaveChangesAsync();
