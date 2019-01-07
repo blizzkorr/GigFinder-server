@@ -31,7 +31,7 @@ namespace GigFinder.Models
             modelBuilder.ApplyConfiguration(new SearchRequestConfiguration());
         }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<UserID> Users { get; set; }
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Host> Hosts { get; set; }
         public DbSet<Event> Events { get; set; }

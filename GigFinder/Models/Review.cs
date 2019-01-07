@@ -17,7 +17,7 @@ namespace GigFinder.Models
         public int HostId { get; set; }
         public byte[] Timestamp { get; set; }
 
-        public virtual User Author { get; set; }
+        public virtual UserID Author { get; set; }
         public virtual Artist Artist { get; set; }
         public virtual Host Host { get; set; }
 

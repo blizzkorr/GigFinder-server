@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace GigFinder.Models
 {
-    public class Artist : User
+    public class Artist
     {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public byte[] ProfilePicture { get; set; }
         public string BackgroundColor { get; set; }
         public byte[] Timestamp { get; set; }
 
+        public virtual UserID UserID { get; set; }
         public virtual ICollection<Genre> Genres { get; set; }
         public virtual ICollection<ArtistSocialMedia> ArtistSocialMedias { get; set; }
         public virtual ICollection<Participation> Participations { get; set; }
@@ -34,8 +39,9 @@ namespace GigFinder.Models
     {
         public void Configure(EntityTypeBuilder<Artist> builder)
         {
-            builder.HasBaseType<User>();
+            builder.HasKey(a => a.Id);
 
+            builder.Property(a => a.Name).IsRequired();
             builder.Property(a => a.BackgroundColor).HasMaxLength(6).IsFixedLength().IsRequired();
             builder.Property(a => a.Timestamp).IsRowVersion();
 

@@ -5,19 +5,18 @@ using System.Collections.Generic;
 
 namespace GigFinder.Models
 {
-    public class User 
+    public class UserID 
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public byte[] ProfilePicture { get; set; }
         public string GoogleIdToken { get; set; }
 
+        public virtual Artist Artist { get; set; }
+        public virtual Host Host { get; set; }
         public virtual ICollection<Message> SentMessages { get; set; }
         public virtual ICollection<Message> ReceivedMessages { get; set; }
         public virtual ICollection<Review> WrittenReviews { get; set; }
 
-        public User()
+        public UserID()
         {
             SentMessages = new HashSet<Message>();
             ReceivedMessages = new HashSet<Message>();
@@ -30,12 +29,16 @@ namespace GigFinder.Models
         }
     }
 
-    public class UserConfiguration : IEntityTypeConfiguration<User>
+    public class UserConfiguration : IEntityTypeConfiguration<UserID>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<UserID> builder)
         {
-            builder.Property(u => u.Name).IsRequired();
+            builder.HasKey(u => u.Id);
+
             builder.Property(u => u.GoogleIdToken).IsRequired();
+
+            builder.HasOne(u => u.Artist).WithOne(a => a.UserId).HasForeignKey<Artist>(a => a.ID);
+            builder.HasOne(u => u.Host).WithOne(h => h.UserId).HasForeignKey<Host>(h => h.ID);
         }
     }
 }
