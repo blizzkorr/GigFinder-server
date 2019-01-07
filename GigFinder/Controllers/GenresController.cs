@@ -12,18 +12,18 @@ namespace GigFinder.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class GenresController : ControllerBase
     {
         private readonly GigFinderContext _context;
 
-        public UsersController(GigFinderContext context)
+        public GenresController(GigFinderContext context)
         {
             _context = context;
         }
 
-        // GET: api/Users
+        // GET: api/Genres
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<Genre>>> GetGenre()
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
@@ -32,29 +32,26 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            return _context.Users.Where(u => u.Id == authorizedUser.Value.Id).ForEach(u => u.Anonymize()).ToList();
+            return await _context.Genre.ToListAsync();
         }
 
-        // GET: api/Users/5
+        // GET: api/Genres/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<Genre>> GetGenre(int id)
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
+
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var user = await _context.Users.FindAsync(id);
+            var genre = await _context.Genre.FindAsync(id);
 
-            if (user.Id != authorizedUser.Value.Id)
-                return Unauthorized();
-            if (user == null)
+            if (genre == null)
                 return NotFound();
 
-            user.Anonymize();
-
-            return user;
+            return genre;
         }
     }
 }

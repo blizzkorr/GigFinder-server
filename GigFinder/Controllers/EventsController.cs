@@ -23,7 +23,7 @@ namespace GigFinder.Controllers
 
         // GET: api/Events
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Event>>> GetEvents(GeoPoint location, int? genre, int? host, int? artist)
+        public async Task<ActionResult<IEnumerable<Event>>> GetEvents(GeoPoint location, double? radius, int? genre, int? host, int? artist)
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
@@ -32,13 +32,14 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
+            DBInitializer.Run();
+
             if (location == null && !genre.HasValue && !host.HasValue && !artist.HasValue)
                 return await _context.Events.Where(e => e.HostId == authorizedUser.Value.Id || e.Participations.Any(p => p.ArtistId == authorizedUser.Value.Id)).ToListAsync();
 
             var query = _context.Events;
-            // consider location
-            //if (location != null)
-            //    query.Where(e => e.Location);
+            if (location != null && radius.HasValue)
+                query.Where(e => GeoPoint.CalculateDistance(location, new GeoPoint() { Longitude = e.Longitude, Latitude = e.Latitude }) <= radius.Value);
             if (genre.HasValue)
                 query.Where(e => e.Genres.Any(g => g.Id == genre));
             if (host.HasValue)

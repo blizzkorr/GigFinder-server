@@ -16,6 +16,35 @@ namespace GigFinder.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.0-rtm-35687");
 
+            modelBuilder.Entity("GigFinder.Models.Artist", b =>
+                {
+                    b.Property<int>("Id");
+
+                    b.Property<string>("BackgroundColor")
+                        .IsRequired()
+                        .IsFixedLength(true)
+                        .HasMaxLength(6);
+
+                    b.Property<string>("Description")
+                        .IsRequired();
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<int?>("ProfilePictureId");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfilePictureId")
+                        .IsUnique();
+
+                    b.ToTable("Artists");
+                });
+
             modelBuilder.Entity("GigFinder.Models.ArtistSocialMedia", b =>
                 {
                     b.Property<int>("ArtistId");
@@ -48,7 +77,9 @@ namespace GigFinder.Migrations
 
                     b.Property<int>("HostId");
 
-                    b.Property<int>("LocationId");
+                    b.Property<double>("Latitude");
+
+                    b.Property<double>("Longitude");
 
                     b.Property<DateTime>("Start");
 
@@ -63,9 +94,29 @@ namespace GigFinder.Migrations
 
                     b.HasIndex("HostId");
 
-                    b.HasIndex("LocationId");
-
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("GigFinder.Models.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ArtistId");
+
+                    b.Property<int>("HostId");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtistId");
+
+                    b.HasIndex("HostId");
+
+                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("GigFinder.Models.Genre", b =>
@@ -79,7 +130,7 @@ namespace GigFinder.Migrations
 
                     b.Property<int>("HostId");
 
-                    b.Property<int>("ParentId");
+                    b.Property<int?>("ParentId");
 
                     b.Property<int>("SearchRequestId");
 
@@ -105,6 +156,39 @@ namespace GigFinder.Migrations
                     b.ToTable("Genre");
                 });
 
+            modelBuilder.Entity("GigFinder.Models.Host", b =>
+                {
+                    b.Property<int>("Id");
+
+                    b.Property<string>("BackgroundColor")
+                        .IsRequired()
+                        .IsFixedLength(true)
+                        .HasMaxLength(6);
+
+                    b.Property<string>("Description")
+                        .IsRequired();
+
+                    b.Property<double>("Latitude");
+
+                    b.Property<double>("Longitude");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<int?>("ProfilePictureId");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfilePictureId")
+                        .IsUnique();
+
+                    b.ToTable("Hosts");
+                });
+
             modelBuilder.Entity("GigFinder.Models.HostSocialMedia", b =>
                 {
                     b.Property<int>("HostId");
@@ -123,36 +207,6 @@ namespace GigFinder.Migrations
                     b.HasIndex("SocialMediaId");
 
                     b.ToTable("HostSocialMedias");
-                });
-
-            modelBuilder.Entity("GigFinder.Models.Location", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("AddressAddition");
-
-                    b.Property<string>("City");
-
-                    b.Property<string>("Country");
-
-                    b.Property<string>("HouseNumber");
-
-                    b.Property<double>("Latitude");
-
-                    b.Property<double>("Longitude");
-
-                    b.Property<string>("Street");
-
-                    b.Property<byte[]>("Timestamp")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate();
-
-                    b.Property<string>("ZipCode");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("GigFinder.Models.Message", b =>
@@ -219,18 +273,14 @@ namespace GigFinder.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Alias");
+                    b.Property<int?>("ArtistId");
 
-                    b.Property<int>("ArtistId");
+                    b.Property<int?>("EventId");
 
-                    b.Property<int>("HostId");
+                    b.Property<int?>("HostId");
 
                     b.Property<byte[]>("Image")
                         .IsRequired();
-
-                    b.Property<bool>("IsProfileThumbnail")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
@@ -239,6 +289,8 @@ namespace GigFinder.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ArtistId");
+
+                    b.HasIndex("EventId");
 
                     b.HasIndex("HostId");
 
@@ -250,13 +302,13 @@ namespace GigFinder.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ArtistId");
+                    b.Property<int?>("ArtistId");
 
                     b.Property<int>("AuthorId");
 
                     b.Property<string>("Comment");
 
-                    b.Property<int>("HostId");
+                    b.Property<int?>("HostId");
 
                     b.Property<int>("Rating");
 
@@ -282,7 +334,9 @@ namespace GigFinder.Migrations
 
                     b.Property<int>("ArtistId");
 
-                    b.Property<int>("LocationId");
+                    b.Property<double>("Latitude");
+
+                    b.Property<double>("Longitude");
 
                     b.Property<double>("Radius");
 
@@ -293,8 +347,6 @@ namespace GigFinder.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ArtistId");
-
-                    b.HasIndex("LocationId");
 
                     b.ToTable("SearchRequests");
                 });
@@ -307,7 +359,7 @@ namespace GigFinder.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<byte[]>("Thumbnail");
+                    b.Property<int?>("ThumbnailId");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
@@ -318,71 +370,35 @@ namespace GigFinder.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ThumbnailId")
+                        .IsUnique();
+
                     b.ToTable("SocialMedias");
                 });
 
-            modelBuilder.Entity("GigFinder.Models.User", b =>
+            modelBuilder.Entity("GigFinder.Models.UserID", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
                     b.Property<string>("GoogleIdToken")
                         .IsRequired();
 
-                    b.Property<string>("Name")
-                        .IsRequired();
-
-                    b.Property<byte[]>("ProfilePicture");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
+                    b.ToTable("UserIDs");
                 });
 
             modelBuilder.Entity("GigFinder.Models.Artist", b =>
                 {
-                    b.HasBaseType("GigFinder.Models.User");
+                    b.HasOne("GigFinder.Models.UserID", "UserId")
+                        .WithOne("Artist")
+                        .HasForeignKey("GigFinder.Models.Artist", "Id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.Property<string>("BackgroundColor")
-                        .IsRequired()
-                        .IsFixedLength(true)
-                        .HasMaxLength(6);
-
-                    b.Property<byte[]>("Timestamp")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate();
-
-                    b.HasDiscriminator().HasValue("Artist");
-                });
-
-            modelBuilder.Entity("GigFinder.Models.Host", b =>
-                {
-                    b.HasBaseType("GigFinder.Models.User");
-
-                    b.Property<string>("BackgroundColor")
-                        .IsRequired()
-                        .HasColumnName("Host_BackgroundColor")
-                        .IsFixedLength(true)
-                        .HasMaxLength(6);
-
-                    b.Property<int>("DefaultLocationId");
-
-                    b.Property<byte[]>("Timestamp")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnName("Host_Timestamp");
-
-                    b.HasIndex("DefaultLocationId")
-                        .IsUnique();
-
-                    b.HasDiscriminator().HasValue("Host");
+                    b.HasOne("GigFinder.Models.Picture", "ProfilePicture")
+                        .WithOne()
+                        .HasForeignKey("GigFinder.Models.Artist", "ProfilePictureId");
                 });
 
             modelBuilder.Entity("GigFinder.Models.ArtistSocialMedia", b =>
@@ -404,10 +420,18 @@ namespace GigFinder.Migrations
                         .WithMany("Events")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
 
-                    b.HasOne("GigFinder.Models.Location", "Location")
+            modelBuilder.Entity("GigFinder.Models.Favorite", b =>
+                {
+                    b.HasOne("GigFinder.Models.Artist", "Artist")
+                        .WithMany("Favorites")
+                        .HasForeignKey("ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("GigFinder.Models.Host", "Host")
                         .WithMany()
-                        .HasForeignKey("LocationId")
+                        .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -430,13 +454,24 @@ namespace GigFinder.Migrations
 
                     b.HasOne("GigFinder.Models.Genre", "Parent")
                         .WithMany("SubGenres")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ParentId");
 
                     b.HasOne("GigFinder.Models.SearchRequest")
                         .WithMany("Genres")
                         .HasForeignKey("SearchRequestId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("GigFinder.Models.Host", b =>
+                {
+                    b.HasOne("GigFinder.Models.UserID", "UserId")
+                        .WithOne("Host")
+                        .HasForeignKey("GigFinder.Models.Host", "Id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("GigFinder.Models.Picture", "ProfilePicture")
+                        .WithOne()
+                        .HasForeignKey("GigFinder.Models.Host", "ProfilePictureId");
                 });
 
             modelBuilder.Entity("GigFinder.Models.HostSocialMedia", b =>
@@ -454,12 +489,12 @@ namespace GigFinder.Migrations
 
             modelBuilder.Entity("GigFinder.Models.Message", b =>
                 {
-                    b.HasOne("GigFinder.Models.User", "Author")
+                    b.HasOne("GigFinder.Models.UserID", "Author")
                         .WithMany("SentMessages")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("GigFinder.Models.User", "Receiver")
+                    b.HasOne("GigFinder.Models.UserID", "Receiver")
                         .WithMany("ReceivedMessages")
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -482,31 +517,31 @@ namespace GigFinder.Migrations
                 {
                     b.HasOne("GigFinder.Models.Artist", "Artist")
                         .WithMany("Pictures")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ArtistId");
+
+                    b.HasOne("GigFinder.Models.Event", "Event")
+                        .WithMany("Pictures")
+                        .HasForeignKey("EventId");
 
                     b.HasOne("GigFinder.Models.Host", "Host")
                         .WithMany("Pictures")
-                        .HasForeignKey("HostId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("HostId");
                 });
 
             modelBuilder.Entity("GigFinder.Models.Review", b =>
                 {
                     b.HasOne("GigFinder.Models.Artist", "Artist")
                         .WithMany("Reviews")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ArtistId");
 
-                    b.HasOne("GigFinder.Models.User", "Author")
+                    b.HasOne("GigFinder.Models.UserID", "Author")
                         .WithMany("WrittenReviews")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("GigFinder.Models.Host", "Host")
                         .WithMany("Reviews")
-                        .HasForeignKey("HostId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("HostId");
                 });
 
             modelBuilder.Entity("GigFinder.Models.SearchRequest", b =>
@@ -515,19 +550,13 @@ namespace GigFinder.Migrations
                         .WithMany("SearchRequests")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("GigFinder.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("GigFinder.Models.Host", b =>
+            modelBuilder.Entity("GigFinder.Models.SocialMedia", b =>
                 {
-                    b.HasOne("GigFinder.Models.Location", "Location")
+                    b.HasOne("GigFinder.Models.Picture", "Thumbnail")
                         .WithOne()
-                        .HasForeignKey("GigFinder.Models.Host", "DefaultLocationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GigFinder.Models.SocialMedia", "ThumbnailId");
                 });
 #pragma warning restore 612, 618
         }

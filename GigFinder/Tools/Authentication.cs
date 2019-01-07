@@ -23,13 +23,13 @@ namespace GigFinder.Tools
             return await GoogleServices.ValidateTokenAsync(GetIdToken(httpRequest));
         }
 
-        public static async Task<ActionResult<User>> GetAuthenticatedUserAsync(GigFinderContext context, HttpRequest httpRequest)
+        public static async Task<ActionResult<UserID>> GetAuthenticatedUserAsync(GigFinderContext context, HttpRequest httpRequest)
         {
             var payload = await GoogleServices.GetTokenPayloadAsync(GetIdToken(httpRequest));
             if (payload == null)
                 return new UnauthorizedResult();
 
-            return context.Users.SingleOrDefault(u => u.GoogleIdToken == payload.Subject);
+            return context.UserIDs.SingleOrDefault(u => u.GoogleIdToken == payload.Subject);
         }
     }
 }

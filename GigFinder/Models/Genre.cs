@@ -11,7 +11,7 @@ namespace GigFinder.Models
     {
         public int Id { get; set; }
         public string Value { get; set; }
-        public int ParentId { get; set; }
+        public int? ParentId { get; set; }
         public byte[] Timestamp { get; set; }
 
         public virtual Genre Parent { get; set; }

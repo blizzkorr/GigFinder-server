@@ -32,7 +32,8 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            return _context.Hosts.Where(u => u.Id == authorizedUser.Value.Id).ForEach(u => u.Anonymize()).ToList();
+            return await _context.Hosts.Include(h => h.HostSocialMedias)
+                .Where(h => h.Id == authorizedUser.Value.Id).ToListAsync();
         }
 
         // GET: api/Hosts/5
@@ -45,12 +46,12 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var host = await _context.Hosts.FindAsync(id);
+            var host = await _context.Hosts.Include(h => h.HostSocialMedias).SingleOrDefaultAsync(h => h.Id == id);
 
-            if (host.Id != authorizedUser.Value.Id)
-                return Unauthorized();
             if (host == null)
                 return NotFound();
+            if (host.Id != authorizedUser.Value.Id)
+                return Unauthorized();
 
             return host;
         }
@@ -88,14 +89,17 @@ namespace GigFinder.Controllers
 
         // POST: api/Artists
         [HttpPost]
-        public async Task<IActionResult> PostEvent(Host host)
+        public async Task<IActionResult> PostHost(Host host)
         {
             if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
             var payload = await GoogleServices.GetTokenPayloadAsync(Request.Headers["Authorization"].First());
-            if (string.IsNullOrEmpty(host.GoogleIdToken))
-                host.GoogleIdToken = payload.Subject;
+            UserID existingUser = _context.UserIDs.SingleOrDefault(u => u.GoogleIdToken == payload.Subject);
+            if (existingUser != null)
+                host.UserId = existingUser;
+            else
+                host.UserId = new UserID() { GoogleIdToken = payload.Subject };
 
             _context.Hosts.Add(host);
             await _context.SaveChangesAsync();
@@ -122,6 +126,8 @@ namespace GigFinder.Controllers
                 return NotFound();
 
             _context.Hosts.Remove(host);
+            if (authorizedUser.Value.Artist == null)
+                _context.UserIDs.Remove(authorizedUser.Value);
             await _context.SaveChangesAsync();
 
             return host;

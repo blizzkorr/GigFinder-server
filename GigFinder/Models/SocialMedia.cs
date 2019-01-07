@@ -12,8 +12,10 @@ namespace GigFinder.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Website { get; set; }
-        public byte[] Thumbnail { get; set; }
+        public int? ThumbnailId { get; set; }
         public byte[] Timestamp { get; set; }
+
+        public virtual Picture Thumbnail { get; set; }
 
         public SocialMedia() { }
     }
@@ -27,6 +29,8 @@ namespace GigFinder.Models
             builder.Property(sm => sm.Name).IsRequired();
             builder.Property(sm => sm.Website).IsRequired();
             builder.Property(sm => sm.Timestamp).IsRowVersion();
+
+            builder.HasOne(sm => sm.Thumbnail).WithOne().HasForeignKey<SocialMedia>(sm => sm.ThumbnailId);
         }
     }
 }
