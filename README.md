@@ -6,6 +6,10 @@ URL: https://gigfinder.azurewebsites.net/api/...
 Authorization token (Google id token) must be always sent in the “Authorization” header.
 For current test purposes, this feature is disabled.
 
+### .../login 
+	GET /login
+	  checks if the current GoogleUser already has an account
+
 ### .../artists 
 	GET /artists
 	  get current authenticated artist profile
@@ -97,3 +101,27 @@ For current test purposes, this feature is disabled.
 	  update a searchrequest by id for the current authenticated artist
 	DELETE /searchreqsuests/8
 	  delete a searchrequest by id for the current authenticated artist
+
+### .../favorites 
+	GET /favorites
+	  get the favorites for the current authenticated artist
+	GET /favorites/3
+	  get favorite by id for the current authenticated artist
+	POST /favorites
+	  create new favorite for the current authenticated artist
+	PUT /favorites/3
+	  update favorite by id for the current authenticated artist
+	DELETE /favorites/3
+	  delete favorite by id for the current authenticated artist
+	  
+### .../genres 
+	GET /genres
+	  get all genres
+	GET /genres/6
+	  get genre by id
+	  
+### .../socialmedias 
+	GET /socialmedias
+	  get all socialmedias
+	GET /socialmedias/6
+	  get socialmedia by id
