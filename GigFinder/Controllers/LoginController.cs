@@ -28,7 +28,7 @@ namespace GigFinder.Controllers
             if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
 
-            return authorizedUser.Value != null;
+            return authorizedUser.Value != default(UserID);
         }
     }
 }
