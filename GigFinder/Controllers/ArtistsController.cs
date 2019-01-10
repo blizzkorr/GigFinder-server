@@ -89,7 +89,7 @@ namespace GigFinder.Controllers
 
         // POST: api/Artists
         [HttpPost]
-        public async Task<IActionResult> PostArtist(Artist artist)
+        public async Task<ActionResult<Artist>> PostArtist(Artist artist)
         {
             if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
@@ -104,7 +104,7 @@ namespace GigFinder.Controllers
             _context.Artists.Add(artist);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return CreatedAtAction("GetArtist", new { id = artist.Id }, artist);
         }
 
         // DELETE: api/Artists/5
