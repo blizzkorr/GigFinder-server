@@ -18,15 +18,15 @@ namespace GigFinder.Models
 
         public ICollection<int> GenreIds { get; set; }
 
-        public virtual UserID UserId { get; set; }
-        public virtual Picture ProfilePicture { get; set; }
+        public UserID UserId { get; set; }
+        public Picture ProfilePicture { get; set; }
         public virtual ICollection<ArtistGenre> ArtistGenres { get; set; }
         public virtual ICollection<ArtistSocialMedia> ArtistSocialMedias { get; set; }
         public virtual ICollection<Participation> Participations { get; set; }
-        public virtual ICollection<Picture> Pictures { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
+        public ICollection<Picture> Pictures { get; set; }
+        public ICollection<Review> Reviews { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }
-        public virtual ICollection<SearchRequest> SearchRequests { get; set; }
+        public ICollection<SearchRequest> SearchRequests { get; set; }
 
         public Artist()
         {

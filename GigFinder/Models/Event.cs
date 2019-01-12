@@ -23,8 +23,8 @@ namespace GigFinder.Models
 
         public virtual Host Host { get; set; }
         public virtual ICollection<EventGenre> EventGenres { get; set; }
-        public virtual ICollection<Picture> Pictures { get; set; }
-        public virtual ICollection<Participation> Participations { get; set; }
+        public ICollection<Picture> Pictures { get; set; }
+        public ICollection<Participation> Participations { get; set; }
 
         public Event()
         {

@@ -20,13 +20,13 @@ namespace GigFinder.Models
 
         public ICollection<int> GenreIds { get; set; }
 
-        public virtual UserID UserId { get; set; }
-        public virtual Picture ProfilePicture { get; set; }
+        public UserID UserId { get; set; }
+        public Picture ProfilePicture { get; set; }
         public virtual ICollection<HostGenre> HostGenres { get; set; }
         public virtual ICollection<HostSocialMedia> HostSocialMedias { get; set; }
-        public virtual ICollection<Event> Events { get; set; }
-        public virtual ICollection<Picture> Pictures { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
+        public ICollection<Event> Events { get; set; }
+        public ICollection<Picture> Pictures { get; set; }
+        public ICollection<Review> Reviews { get; set; }
 
         public Host()
         {

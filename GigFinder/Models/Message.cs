@@ -17,8 +17,8 @@ namespace GigFinder.Models
         public DateTime Created { get; set; }
         public byte[] Timestamp { get; set; }
 
-        public virtual UserID Author { get; set; }
-        public virtual UserID Receiver { get; set; }
+        public UserID Author { get; set; }
+        public UserID Receiver { get; set; }
 
         public Message() { }
     }

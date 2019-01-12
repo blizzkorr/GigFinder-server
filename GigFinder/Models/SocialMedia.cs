@@ -15,7 +15,7 @@ namespace GigFinder.Models
         public int? ThumbnailId { get; set; }
         public byte[] Timestamp { get; set; }
 
-        public virtual Picture Thumbnail { get; set; }
+        public Picture Thumbnail { get; set; }
 
         public SocialMedia() { }
     }
