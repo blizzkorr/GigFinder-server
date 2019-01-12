@@ -12,9 +12,9 @@ namespace GigFinder.Models
 
         public virtual Artist Artist { get; set; }
         public virtual Host Host { get; set; }
-        public virtual ICollection<Message> SentMessages { get; set; }
-        public virtual ICollection<Message> ReceivedMessages { get; set; }
-        public virtual ICollection<Review> WrittenReviews { get; set; }
+        public ICollection<Message> SentMessages { get; set; }
+        public ICollection<Message> ReceivedMessages { get; set; }
+        public ICollection<Review> WrittenReviews { get; set; }
 
         public UserID()
         {

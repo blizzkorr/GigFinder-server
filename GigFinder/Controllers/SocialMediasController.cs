@@ -25,11 +25,7 @@ namespace GigFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SocialMedia>>> GetSocialMedias()
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
-                return Unauthorized();
-
-            if (authorizedUser.Value == null)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
             return await _context.SocialMedias.ToListAsync();
@@ -39,11 +35,7 @@ namespace GigFinder.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SocialMedia>> GetSocialMedia(int id)
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
-                return Unauthorized();
-
-            if (authorizedUser.Value == null)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
             var socialMedia = await _context.SocialMedias.FindAsync(id);

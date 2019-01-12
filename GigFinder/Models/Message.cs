@@ -17,8 +17,8 @@ namespace GigFinder.Models
         public DateTime Created { get; set; }
         public byte[] Timestamp { get; set; }
 
-        public virtual UserID Author { get; set; }
-        public virtual UserID Receiver { get; set; }
+        public UserID Author { get; set; }
+        public UserID Receiver { get; set; }
 
         public Message() { }
     }
@@ -30,7 +30,7 @@ namespace GigFinder.Models
             builder.HasKey(m => m.Id);
 
             builder.Property(m => m.Content).IsRequired();
-            builder.Property(m => m.Created).HasDefaultValueSql("getdate()").IsRequired();
+            builder.Property(m => m.Created).HasDefaultValueSql("DATETIME('NOW')").IsRequired();
             builder.Property(m => m.Timestamp).IsRowVersion();
 
             builder.HasOne(m => m.Author).WithMany(u => u.SentMessages).HasForeignKey(m => m.AuthorId).IsRequired();

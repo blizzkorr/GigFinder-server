@@ -18,17 +18,20 @@ namespace GigFinder.Models
         public string BackgroundColor { get; set; }
         public byte[] Timestamp { get; set; }
 
-        public virtual UserID UserId { get; set; }
-        public virtual Picture ProfilePicture { get; set; }
-        public virtual ICollection<Genre> DefaultGenres { get; set; }
+        public ICollection<int> GenreIds { get; set; }
+
+        public UserID UserId { get; set; }
+        public Picture ProfilePicture { get; set; }
+        public virtual ICollection<HostGenre> HostGenres { get; set; }
         public virtual ICollection<HostSocialMedia> HostSocialMedias { get; set; }
-        public virtual ICollection<Event> Events { get; set; }
-        public virtual ICollection<Picture> Pictures { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
+        public ICollection<Event> Events { get; set; }
+        public ICollection<Picture> Pictures { get; set; }
+        public ICollection<Review> Reviews { get; set; }
 
         public Host()
         {
-            DefaultGenres = new HashSet<Genre>();
+            GenreIds = new HashSet<int>();
+            HostGenres = new HashSet<HostGenre>();
             HostSocialMedias = new HashSet<HostSocialMedia>();
             Events = new HashSet<Event>();
             Pictures = new HashSet<Picture>();
@@ -42,6 +45,8 @@ namespace GigFinder.Models
         {
             builder.HasKey(h => h.Id);
 
+            builder.Ignore(h => h.GenreIds);
+
             builder.Property(h => h.Name).IsRequired();
             builder.Property(h => h.Description).IsRequired();
             builder.Property(h => h.Longitude).IsRequired();
@@ -50,7 +55,6 @@ namespace GigFinder.Models
             builder.Property(h => h.Timestamp).IsRowVersion();
 
             builder.HasOne(h => h.ProfilePicture).WithOne().HasForeignKey<Host>(h => h.ProfilePictureId);
-            builder.HasMany(h => h.DefaultGenres).WithOne().IsRequired();
         }
     }
 }

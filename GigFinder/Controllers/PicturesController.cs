@@ -33,11 +33,11 @@ namespace GigFinder.Controllers
                 return Unauthorized();
 
             if (@event.HasValue)
-                return await _context.Picture.Where(p => p.EventId == @event.Value).ToListAsync();
+                return await _context.Pictures.Where(p => p.EventId == @event.Value).ToListAsync();
             else if (host.HasValue)
-                return await _context.Picture.Where(p => p.HostId == host.Value).ToListAsync();
+                return await _context.Pictures.Where(p => p.HostId == host.Value).ToListAsync();
             else if (artist.HasValue)
-                return await _context.Picture.Where(p => p.ArtistId == artist.Value).ToListAsync();
+                return await _context.Pictures.Where(p => p.ArtistId == artist.Value).ToListAsync();
             else
                 return BadRequest();
         }
@@ -53,7 +53,7 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var picture = await _context.Picture.FindAsync(id);
+            var picture = await _context.Pictures.FindAsync(id);
 
             if (picture == null)
                 return NotFound();
@@ -125,7 +125,7 @@ namespace GigFinder.Controllers
                     return Unauthorized();
             }
 
-            _context.Picture.Add(picture);
+            _context.Pictures.Add(picture);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetPicture", new { id = picture.Id }, picture);
@@ -142,7 +142,7 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var picture = await _context.Picture.FindAsync(id);
+            var picture = await _context.Pictures.FindAsync(id);
 
             if (picture == null)
                 return NotFound();
@@ -159,7 +159,7 @@ namespace GigFinder.Controllers
                     return Unauthorized();
             }
 
-            _context.Picture.Remove(picture);
+            _context.Pictures.Remove(picture);
             await _context.SaveChangesAsync();
 
             return picture;
@@ -167,7 +167,7 @@ namespace GigFinder.Controllers
 
         private bool PictureExists(int id)
         {
-            return _context.Picture.Any(e => e.Id == id);
+            return _context.Pictures.Any(e => e.Id == id);
         }
     }
 }

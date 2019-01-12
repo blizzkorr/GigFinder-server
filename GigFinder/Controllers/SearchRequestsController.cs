@@ -32,7 +32,7 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
             
-            return await _context.SearchRequests.Where(sr => sr.ArtistId == authorizedUser.Value.Id).ToListAsync();
+            return await _context.SearchRequests.Include(h => h.SearchRequestGenres).Where(sr => sr.ArtistId == authorizedUser.Value.Id).ToListAsync();
         }
 
         // GET: api/SearchRequests/5
@@ -46,7 +46,7 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var searchRequest = await _context.SearchRequests.FindAsync(id);
+            var searchRequest = await _context.SearchRequests.Include(h => h.SearchRequestGenres).SingleOrDefaultAsync(h => h.Id == id);
 
             if (searchRequest.ArtistId != authorizedUser.Value.Id)
                 return Unauthorized();

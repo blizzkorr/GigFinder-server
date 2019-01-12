@@ -25,28 +25,22 @@ namespace GigFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Genre>>> GetGenre()
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
+            DBInitializer.Run();
+
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
-            if (authorizedUser.Value == null)
-                return Unauthorized();
-
-            return await _context.Genre.ToListAsync();
+            return await _context.Genres.ToListAsync();
         }
 
         // GET: api/Genres/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Genre>> GetGenre(int id)
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
-            if (authorizedUser.Value == null)
-                return Unauthorized();
-
-            var genre = await _context.Genre.FindAsync(id);
+            var genre = await _context.Genres.FindAsync(id);
 
             if (genre == null)
                 return NotFound();

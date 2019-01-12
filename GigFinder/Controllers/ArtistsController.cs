@@ -32,7 +32,7 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            return await _context.Artists.Include(a => a.ArtistSocialMedias)
+            return await _context.Artists.Include(a => a.ArtistSocialMedias).Include(h => h.ArtistGenres)
                 .Where(u => u.Id == authorizedUser.Value.Id).ToListAsync();
         }
 
@@ -40,18 +40,13 @@ namespace GigFinder.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Artist>> GetArtist(int id)
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
-                return Unauthorized();
-            if (authorizedUser.Value == null)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
-            var artist = await _context.Artists.Include(a => a.ArtistSocialMedias).SingleOrDefaultAsync(a => a.Id == id);
+            var artist = await _context.Artists.Include(a => a.ArtistSocialMedias).Include(h => h.ArtistGenres).SingleOrDefaultAsync(a => a.Id == id);
 
             if (artist == null)
                 return NotFound();
-            if (artist.Id != authorizedUser.Value.Id)
-                return Unauthorized();
 
             return artist;
         }
@@ -71,6 +66,7 @@ namespace GigFinder.Controllers
             if (id != artist.Id)
                 return BadRequest();
 
+            //SetArtistGenres(artist);
             _context.Entry(artist).State = EntityState.Modified;
 
             try
@@ -101,6 +97,7 @@ namespace GigFinder.Controllers
             else
                 artist.UserId = new UserID() { GoogleIdToken = payload.Subject };
 
+            //SetArtistGenres(artist);
             _context.Artists.Add(artist);
             await _context.SaveChangesAsync();
 
@@ -131,6 +128,21 @@ namespace GigFinder.Controllers
             await _context.SaveChangesAsync();
 
             return artist;
+        }
+
+        private void SetArtistGenres(Artist artist)
+        {
+            if (artist == null)
+                throw new ArgumentNullException(nameof(artist));
+
+            foreach (var hostGenre in artist.ArtistGenres)
+                artist.ArtistGenres.Remove(hostGenre);
+
+            if (artist.GenreIds == null || artist.GenreIds.Count == 0)
+                return;
+
+            foreach (int genreId in artist.GenreIds)
+                artist.ArtistGenres.Add(new ArtistGenre() { ArtistId = artist.Id, GenreId = genreId });
         }
 
         private bool ArtistExists(int id)

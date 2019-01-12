@@ -32,7 +32,7 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            return await _context.Hosts.Include(h => h.HostSocialMedias)
+            return await _context.Hosts.Include(h => h.HostSocialMedias).Include(h => h.HostGenres)
                 .Where(h => h.Id == authorizedUser.Value.Id).ToListAsync();
         }
 
@@ -40,18 +40,13 @@ namespace GigFinder.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Host>> GetHost(int id)
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
-                return Unauthorized();
-            if (authorizedUser.Value == null)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
-            var host = await _context.Hosts.Include(h => h.HostSocialMedias).SingleOrDefaultAsync(h => h.Id == id);
+            var host = await _context.Hosts.Include(h => h.HostSocialMedias).Include(h => h.HostGenres).SingleOrDefaultAsync(h => h.Id == id);
 
             if (host == null)
                 return NotFound();
-            if (host.Id != authorizedUser.Value.Id)
-                return Unauthorized();
 
             return host;
         }
@@ -71,6 +66,7 @@ namespace GigFinder.Controllers
             if (id != host.Id)
                 return BadRequest();
 
+            //SetHostGenres(host);
             _context.Entry(host).State = EntityState.Modified;
 
             try
@@ -101,6 +97,7 @@ namespace GigFinder.Controllers
             else
                 host.UserId = new UserID() { GoogleIdToken = payload.Subject };
 
+            //SetHostGenres(host);
             _context.Hosts.Add(host);
             await _context.SaveChangesAsync();
 
@@ -131,6 +128,21 @@ namespace GigFinder.Controllers
             await _context.SaveChangesAsync();
 
             return host;
+        }
+
+        private void SetHostGenres(Host host)
+        {
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+
+            foreach(var hostGenre in host.HostGenres)
+                host.HostGenres.Remove(hostGenre);
+
+            if (host.GenreIds == null || host.GenreIds.Count == 0)
+                return;
+
+            foreach (int genreId in host.GenreIds)
+                host.HostGenres.Add(new HostGenre() { HostId = host.Id, GenreId = genreId });
         }
 
         private bool HostExists(int id)
