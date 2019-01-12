@@ -32,7 +32,7 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            return await _context.Artists.Include(a => a.ArtistSocialMedias)
+            return await _context.Artists.Include(a => a.ArtistSocialMedias).Include(h => h.ArtistGenres)
                 .Where(u => u.Id == authorizedUser.Value.Id).ToListAsync();
         }
 
@@ -46,7 +46,7 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            var artist = await _context.Artists.Include(a => a.ArtistSocialMedias).SingleOrDefaultAsync(a => a.Id == id);
+            var artist = await _context.Artists.Include(a => a.ArtistSocialMedias).Include(h => h.ArtistGenres).SingleOrDefaultAsync(a => a.Id == id);
 
             if (artist == null)
                 return NotFound();

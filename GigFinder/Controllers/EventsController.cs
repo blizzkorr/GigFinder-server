@@ -35,9 +35,9 @@ namespace GigFinder.Controllers
                 return Unauthorized();
 
             if (location == null && !genre.HasValue && !host.HasValue && !artist.HasValue)
-                return await _context.Events.Where(e => e.HostId == authorizedUser.Value.Id || e.Participations.Any(p => p.ArtistId == authorizedUser.Value.Id)).ToListAsync();
+                return await _context.Events.Include(h => h.EventGenres).Where(e => e.HostId == authorizedUser.Value.Id || e.Participations.Any(p => p.ArtistId == authorizedUser.Value.Id)).ToListAsync();
 
-            var query = _context.Events;
+            var query = _context.Events.Include(h => h.EventGenres);
             if (location != null && radius.HasValue)
                 query.Where(e => GeoPoint.CalculateDistance(location, new GeoPoint() { Longitude = e.Longitude, Latitude = e.Latitude }) <= radius.Value);
             if (genre.HasValue)
@@ -57,7 +57,7 @@ namespace GigFinder.Controllers
             if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
-            var @event = await _context.Events.FindAsync(id);
+            var @event = await _context.Events.Include(h => h.EventGenres).SingleOrDefaultAsync(a => a.Id == id);
 
             if (@event == null)
                 return NotFound();
