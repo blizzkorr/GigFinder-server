@@ -51,7 +51,7 @@ namespace GigFinder.Migrations
                     ReceiverId = table.Column<int>(nullable: false),
                     Content = table.Column<string>(nullable: false),
                     Tag = table.Column<string>(nullable: true),
-                    Created = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
+                    Created = table.Column<DateTime>(nullable: false, defaultValueSql: "DATETIME('NOW')"),
                     Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true)
                 },
                 constraints: table =>

@@ -30,7 +30,7 @@ namespace GigFinder.Models
             builder.HasKey(m => m.Id);
 
             builder.Property(m => m.Content).IsRequired();
-            builder.Property(m => m.Created).HasDefaultValueSql("getdate()").IsRequired();
+            builder.Property(m => m.Created).HasDefaultValueSql("DATETIME('NOW')").IsRequired();
             builder.Property(m => m.Timestamp).IsRowVersion();
 
             builder.HasOne(m => m.Author).WithMany(u => u.SentMessages).HasForeignKey(m => m.AuthorId).IsRequired();

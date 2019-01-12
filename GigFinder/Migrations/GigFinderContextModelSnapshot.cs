@@ -256,7 +256,7 @@ namespace GigFinder.Migrations
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("getdate()");
+                        .HasDefaultValueSql("DATETIME('NOW')");
 
                     b.Property<int>("ReceiverId");
 
