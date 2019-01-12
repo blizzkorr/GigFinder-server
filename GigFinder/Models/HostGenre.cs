@@ -9,7 +9,6 @@ namespace GigFinder.Models
 {
     public class HostGenre
     {
-        //public int Id { get; set; }
         public int HostId { get; set; }
         public int GenreId { get; set; }
         public byte[] Timestamp { get; set; }
