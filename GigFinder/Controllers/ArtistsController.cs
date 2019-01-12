@@ -40,18 +40,13 @@ namespace GigFinder.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Artist>> GetArtist(int id)
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
-                return Unauthorized();
-            if (authorizedUser.Value == null)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
             var artist = await _context.Artists.Include(a => a.ArtistSocialMedias).Include(h => h.ArtistGenres).SingleOrDefaultAsync(a => a.Id == id);
 
             if (artist == null)
                 return NotFound();
-            if (artist.Id != authorizedUser.Value.Id)
-                return Unauthorized();
 
             return artist;
         }

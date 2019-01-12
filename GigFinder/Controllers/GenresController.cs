@@ -27,11 +27,7 @@ namespace GigFinder.Controllers
         {
             DBInitializer.Run();
 
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
-                return Unauthorized();
-
-            if (authorizedUser.Value == null)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
             return await _context.Genres.ToListAsync();
@@ -41,11 +37,7 @@ namespace GigFinder.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Genre>> GetGenre(int id)
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
-                return Unauthorized();
-
-            if (authorizedUser.Value == null)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
             var genre = await _context.Genres.FindAsync(id);

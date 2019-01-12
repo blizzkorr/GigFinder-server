@@ -40,18 +40,13 @@ namespace GigFinder.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Host>> GetHost(int id)
         {
-            var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
-            if (authorizedUser.Result is UnauthorizedResult)
-                return Unauthorized();
-            if (authorizedUser.Value == null)
+            if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 
             var host = await _context.Hosts.Include(h => h.HostSocialMedias).Include(h => h.HostGenres).SingleOrDefaultAsync(h => h.Id == id);
 
             if (host == null)
                 return NotFound();
-            if (host.Id != authorizedUser.Value.Id)
-                return Unauthorized();
 
             return host;
         }
