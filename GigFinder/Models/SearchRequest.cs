@@ -17,11 +17,11 @@ namespace GigFinder.Models
         public byte[] Timestamp { get; set; }
 
         public virtual Artist Artist { get; set; }
-        public virtual ICollection<Genre> Genres { get; set; }
+        public virtual ICollection<SearchRequestGenre> SearchRequestGenres { get; set; }
 
         public SearchRequest() 
         {
-            Genres = new HashSet<Genre>();
+            SearchRequestGenres = new HashSet<SearchRequestGenre>();
         }
     }
 
@@ -37,7 +37,6 @@ namespace GigFinder.Models
             builder.Property(sr => sr.Timestamp).IsRowVersion();
 
             builder.HasOne(sr => sr.Artist).WithMany(a => a.SearchRequests).HasForeignKey(sr => sr.ArtistId).IsRequired();
-            builder.HasMany(sr => sr.Genres).WithOne().IsRequired();
         }
     }
 }

@@ -71,6 +71,7 @@ namespace GigFinder.Controllers
             if (id != artist.Id)
                 return BadRequest();
 
+            //SetArtistGenres(artist);
             _context.Entry(artist).State = EntityState.Modified;
 
             try
@@ -101,6 +102,7 @@ namespace GigFinder.Controllers
             else
                 artist.UserId = new UserID() { GoogleIdToken = payload.Subject };
 
+            //SetArtistGenres(artist);
             _context.Artists.Add(artist);
             await _context.SaveChangesAsync();
 
@@ -131,6 +133,21 @@ namespace GigFinder.Controllers
             await _context.SaveChangesAsync();
 
             return artist;
+        }
+
+        private void SetArtistGenres(Artist artist)
+        {
+            if (artist == null)
+                throw new ArgumentNullException(nameof(artist));
+
+            foreach (var hostGenre in artist.ArtistGenres)
+                artist.ArtistGenres.Remove(hostGenre);
+
+            if (artist.GenreIds == null || artist.GenreIds.Count == 0)
+                return;
+
+            foreach (int genreId in artist.GenreIds)
+                artist.ArtistGenres.Add(new ArtistGenre() { ArtistId = artist.Id, GenreId = genreId });
         }
 
         private bool ArtistExists(int id)

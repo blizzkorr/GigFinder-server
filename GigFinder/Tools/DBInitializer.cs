@@ -15,8 +15,8 @@ namespace GigFinder.Tools
                 if (!context.Events.Any())
                     InitEventAsync(context);
 
-                //if (!context.Genre.Any())
-                //    InitGenreAsync(context);
+                if (!context.Genres.Any())
+                    InitGenreAsync(context);
 
                 //if (!context.SocialMedias.Any())
                 //    InitSocialMediaAsync(context);
@@ -76,50 +76,23 @@ namespace GigFinder.Tools
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
-
-            context.Genre.Add(new Genre()
-            {
-                Value = "Alternative Rock",
-                //SubGenres = {
-                //    new Genre()
-                //    {
-                //        Value = "Britpop",
-                //        SubGenres = { new Genre() { Value = "Post-Britpop" } }
-                //    },
-                //    new Genre()
-                //    {
-                //        Value = "Dream pop",
-                //        SubGenres = { new Genre() { Value = "Shoegaze" } }
-                //    },
-                //    new Genre()
-                //    {
-                //        Value = "Grunge",
-                //        SubGenres = { new Genre() { Value = "Post-grunge" } }
-                //    },
-                //    new Genre()
-                //    {
-                //        Value = "Indie rock",
-                //        SubGenres =
-                //        {
-                //            new Genre() { Value = "Dunedin sound" },
-                //            new Genre() { Value = "Math rock" },
-                //            new Genre() { Value = "Post-punk revival" },
-                //            new Genre() { Value = "Sadcore" },
-                //            new Genre() { Value = "Slowcore" }
-                //        }
-                //    }
-                //}
-            });
-            context.Genre.Add(new Genre() { Value = "Beat music" });
-            context.Genre.Add(new Genre() { Value = "Christian rock" });
-            context.Genre.Add(new Genre() { Value = "Dark cabaret" });
-            context.Genre.Add(new Genre()
-            {
-                Value = "Electronic rock",
-                //SubGenres = {
-                //    new Genre() { Value = "Electronicore" }
-                //}
-            });
+            
+            context.Genres.Add(new Genre() { Value = "Alternative" });
+            context.Genres.Add(new Genre() { Value = "Electronic" });
+            context.Genres.Add(new Genre() { Value = "Experimental" });
+            context.Genres.Add(new Genre() { Value = "Hip-Hop and Rap" });
+            context.Genres.Add(new Genre() { Value = "Trap" });
+            context.Genres.Add(new Genre() { Value = "Pop" });
+            context.Genres.Add(new Genre() { Value = "R&B" });
+            context.Genres.Add(new Genre() { Value = "Latino" });
+            context.Genres.Add(new Genre() { Value = "Rock" });
+            context.Genres.Add(new Genre() { Value = "Punk" });
+            context.Genres.Add(new Genre() { Value = "Metal" });
+            context.Genres.Add(new Genre() { Value = "Jazz" });
+            context.Genres.Add(new Genre() { Value = "Folk" });
+            context.Genres.Add(new Genre() { Value = "Techno" });
+            context.Genres.Add(new Genre() { Value = "House" });
+            context.Genres.Add(new Genre() { Value = "Singer Songwriter" });
 
             await context.SaveChangesAsync();
         }

@@ -29,6 +29,10 @@ namespace GigFinder.Models
             modelBuilder.ApplyConfiguration(new ParticipationConfiguration());
             modelBuilder.ApplyConfiguration(new SearchRequestConfiguration());
             modelBuilder.ApplyConfiguration(new FavoriteConfiguration());
+            modelBuilder.ApplyConfiguration(new HostGenreConfiguration());
+            modelBuilder.ApplyConfiguration(new ArtistGenreConfiguration());
+            modelBuilder.ApplyConfiguration(new EventGenreConfiguration());
+            modelBuilder.ApplyConfiguration(new SearchRequestGenreConfiguration());
         }
 
         public DbSet<UserID> UserIDs { get; set; }
@@ -36,14 +40,18 @@ namespace GigFinder.Models
         public DbSet<Host> Hosts { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Participation> Participations { get; set; }
-        public DbSet<Genre> Genre { get; set; }
+        public DbSet<Genre> Genres { get; set; }
         public DbSet<Message> Messages { get; set; }
-        public DbSet<Picture> Picture { get; set; }
+        public DbSet<Picture> Pictures { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<SearchRequest> SearchRequests { get; set; }
         public DbSet<SocialMedia> SocialMedias { get; set; }
         public DbSet<ArtistSocialMedia> ArtistSocialMedias { get; set; }
         public DbSet<HostSocialMedia> HostSocialMedias { get; set; }
+        public DbSet<ArtistGenre> ArtistGenres { get; set;}
+        public DbSet<HostGenre> HostGenres { get; set; }
+        public DbSet<EventGenre> EventGenres { get; set; }
+        public DbSet<SearchRequestGenre> SearchRequestGenres { get; set; }
     }
 }
