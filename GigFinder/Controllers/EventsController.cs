@@ -83,7 +83,6 @@ namespace GigFinder.Controllers
             if (@event.HostId != authorizedUser.Value.Id)
                 return Unauthorized();
 
-            //SetEventGenres(@event);
             _context.Entry(@event).State = EntityState.Modified;
 
             try
@@ -115,7 +114,6 @@ namespace GigFinder.Controllers
             if (@event.HostId != authorizedUser.Value.Id)
                 return Unauthorized();
 
-            //SetEventGenres(@event);
             _context.Events.Add(@event);
             await _context.SaveChangesAsync();
 
@@ -144,21 +142,6 @@ namespace GigFinder.Controllers
             await _context.SaveChangesAsync();
 
             return @event;
-        }
-
-        private void SetEventGenres(Event @event)
-        {
-            if (@event == null)
-                throw new ArgumentNullException(nameof(@event));
-
-            foreach (var hostGenre in @event.EventGenres)
-                @event.EventGenres.Remove(hostGenre);
-
-            if (@event.GenreIds == null || @event.GenreIds.Count == 0)
-                return;
-
-            foreach (int genreId in @event.GenreIds)
-                @event.EventGenres.Add(new EventGenre() { EventId = @event.Id, GenreId = genreId });
         }
 
         private bool EventExists(int id)

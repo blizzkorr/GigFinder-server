@@ -19,8 +19,6 @@ namespace GigFinder.Models
         public int HostId { get; set; }
         public byte[] Timestamp { get; set; }
 
-        public ICollection<int> GenreIds { get; set; }
-
         public virtual Host Host { get; set; }
         public virtual ICollection<EventGenre> EventGenres { get; set; }
         public ICollection<Picture> Pictures { get; set; }
@@ -28,7 +26,6 @@ namespace GigFinder.Models
 
         public Event()
         {
-            GenreIds = new HashSet<int>();
             EventGenres = new HashSet<EventGenre>();
             Pictures = new HashSet<Picture>();
             Participations = new HashSet<Participation>();
@@ -40,8 +37,6 @@ namespace GigFinder.Models
         public void Configure(EntityTypeBuilder<Event> builder)
         {
             builder.HasKey(e => e.Id);
-
-            builder.Ignore(e => e.GenreIds);
 
             builder.Property(e => e.Title).IsRequired();
             builder.Property(e => e.Description).IsRequired();
