@@ -32,11 +32,14 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            if (!receiver.HasValue)
-                return await _context.Messages.Where(m => m.AuthorId == authorizedUser.Value.Id || m.ReceiverId == authorizedUser.Value.Id).ToListAsync();
-            else
-                return await _context.Messages.Where(m => (m.AuthorId == authorizedUser.Value.Id && m.ReceiverId == receiver.Value) 
-                    || (m.AuthorId == receiver.Value && m.ReceiverId == authorizedUser.Value.Id)).ToListAsync();
+            using (var db = new GigFinderContext())
+            {
+                if (!receiver.HasValue)
+                    return await db.Messages.Where(m => m.AuthorId == authorizedUser.Value.Id || m.ReceiverId == authorizedUser.Value.Id).ToListAsync();
+                else
+                    return await db.Messages.Where(m => (m.AuthorId == authorizedUser.Value.Id && m.ReceiverId == receiver.Value)
+                        || (m.AuthorId == receiver.Value && m.ReceiverId == authorizedUser.Value.Id)).ToListAsync();
+            }
         }
 
         // GET: api/Messages/5

@@ -106,6 +106,8 @@ namespace GigFinder.Controllers
 
             if (authorizedUser.Value == null)
                 return Unauthorized();
+            if (participation.ArtistId == 0)
+                participation.ArtistId = authorizedUser.Value.Id;
             if (!(participation.ArtistId == authorizedUser.Value.Id || @event.HostId == authorizedUser.Value.Id))
                 return Unauthorized();
             

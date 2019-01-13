@@ -34,20 +34,23 @@ namespace GigFinder.Controllers
             if (authorizedUser.Value == null)
                 return Unauthorized();
 
-            if (location == null && !genre.HasValue && !host.HasValue && !artist.HasValue)
-                return await _context.Events.Include(h => h.EventGenres).Where(e => e.HostId == authorizedUser.Value.Id || e.Participations.Any(p => p.ArtistId == authorizedUser.Value.Id)).ToListAsync();
+            using (var db = new GigFinderContext())
+            {
+                if (location == null && !genre.HasValue && !host.HasValue && !artist.HasValue)
+                    return await db.Events.Include(h => h.EventGenres).Where(e => e.HostId == authorizedUser.Value.Id || e.Participations.Any(p => p.ArtistId == authorizedUser.Value.Id)).ToListAsync();
 
-            var query = _context.Events.Include(h => h.EventGenres);
-            if (location != null && radius.HasValue)
-                query.Where(e => GeoPoint.CalculateDistance(location, new GeoPoint() { Longitude = e.Longitude, Latitude = e.Latitude }) <= radius.Value);
-            if (genre.HasValue)
-                query.Where(e => e.EventGenres.Any(eg => eg.GenreId == genre));
-            if (host.HasValue)
-                query.Where(e => e.HostId == host);
-            if (artist.HasValue)
-                query.Where(e => e.Participations.Any(p => p.ArtistId == artist));
+                var query = db.Events.Include(h => h.EventGenres);
+                if (location != null && radius.HasValue)
+                    query.Where(e => GeoPoint.CalculateDistance(location, new GeoPoint() { Longitude = e.Longitude, Latitude = e.Latitude }) <= radius.Value);
+                if (genre.HasValue)
+                    query.Where(e => e.EventGenres.Any(eg => eg.GenreId == genre));
+                if (host.HasValue)
+                    query.Where(e => e.HostId == host);
+                if (artist.HasValue)
+                    query.Where(e => e.Participations.Any(p => p.ArtistId == artist));
 
-            return await query.ToListAsync();
+                return await query.ToListAsync();
+            }
         }
 
         // GET: api/Events/5
@@ -107,7 +110,7 @@ namespace GigFinder.Controllers
 
             if (authorizedUser.Value == null)
                 return Unauthorized();
-            if (@event.Host == null)
+            if (@event.HostId == 0)
                 @event.HostId = authorizedUser.Value.Id;
             if (@event.HostId != authorizedUser.Value.Id)
                 return Unauthorized();
