@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GigFinder.Migrations
 {
     [DbContext(typeof(GigFinderContext))]
-    [Migration("20190112200431_InitialCreate")]
+    [Migration("20190116233225_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

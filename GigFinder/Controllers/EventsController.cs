@@ -25,8 +25,6 @@ namespace GigFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvents(GeoPoint location, double? radius, int? genre, int? host, int? artist)
         {
-            DBInitializer.Run();
-
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)
                 return Unauthorized();
