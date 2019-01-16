@@ -35,11 +35,11 @@ namespace GigFinder.Controllers
             if (!host.HasValue && !artist.HasValue)
                 return await _context.Reviews.Where(r => r.AuthorId == authorizedUser.Value.Id).ToListAsync();
             
-            var query = _context.Reviews;
+            var query = (IQueryable<Review>)_context.Reviews;
             if (host.HasValue)
-                query.Where(r => r.HostId == host);
+                query = query.Where(r => r.HostId == host);
             if (artist.HasValue)
-                query.Where(r => r.ArtistId == artist);
+                query = query.Where(r => r.ArtistId == artist);
 
             return await query.ToListAsync();
         }

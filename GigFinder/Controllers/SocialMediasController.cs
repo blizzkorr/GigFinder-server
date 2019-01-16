@@ -25,6 +25,8 @@ namespace GigFinder.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SocialMedia>>> GetSocialMedias()
         {
+            DBInitializer.Run();
+
             if (!Authentication.AuthenticateAsync(Request).Result)
                 return Unauthorized();
 

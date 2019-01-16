@@ -18,8 +18,8 @@ namespace GigFinder.Tools
                 if (!context.Genres.Any())
                     InitGenreAsync(context);
 
-                //if (!context.SocialMedias.Any())
-                //    InitSocialMediaAsync(context);
+                if (!context.SocialMedias.Any())
+                    InitSocialMediaAsync(context);
             }
         }
 
@@ -102,7 +102,14 @@ namespace GigFinder.Tools
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-
+            context.SocialMedias.Add(new SocialMedia() { Name = "Soundcloud", Website = "https://soundcloud.com/" });
+            context.SocialMedias.Add(new SocialMedia() { Name = "Facebook", Website = "https://www.facebook.com/" });
+            context.SocialMedias.Add(new SocialMedia() { Name = "Twitter", Website = "https://twitter.com/" });
+            context.SocialMedias.Add(new SocialMedia() { Name = "YouTube", Website = "https://www.youtube.com/" });
+            context.SocialMedias.Add(new SocialMedia() { Name = "MySpace", Website = "https://myspace.com/" });
+            context.SocialMedias.Add(new SocialMedia() { Name = "last.fm", Website = "https://www.last.fm/" });
+            context.SocialMedias.Add(new SocialMedia() { Name = "Spotify", Website = "https://www.spotify.com/" });
+            context.SocialMedias.Add(new SocialMedia() { Name = "Website", Website = "unset" });
 
             await context.SaveChangesAsync();
         }

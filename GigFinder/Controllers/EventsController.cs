@@ -39,15 +39,15 @@ namespace GigFinder.Controllers
                 if (location == null && !genre.HasValue && !host.HasValue && !artist.HasValue)
                     return await db.Events.Include(h => h.EventGenres).Where(e => e.HostId == authorizedUser.Value.Id || e.Participations.Any(p => p.ArtistId == authorizedUser.Value.Id)).ToListAsync();
 
-                var query = db.Events.Include(h => h.EventGenres);
+                var query = (IQueryable<Event>)db.Events.Include(h => h.EventGenres);
                 if (location != null && radius.HasValue)
-                    query.Where(e => GeoPoint.CalculateDistance(location, new GeoPoint() { Longitude = e.Longitude, Latitude = e.Latitude }) <= radius.Value);
+                    query = query.Where(e => GeoPoint.CalculateDistance(location, new GeoPoint() { Longitude = e.Longitude, Latitude = e.Latitude }) <= radius.Value);
                 if (genre.HasValue)
-                    query.Where(e => e.EventGenres.Any(eg => eg.GenreId == genre));
+                    query = query.Where(e => e.EventGenres.Any(eg => eg.GenreId == genre));
                 if (host.HasValue)
-                    query.Where(e => e.HostId == host);
+                    query = query.Where(e => e.HostId == host);
                 if (artist.HasValue)
-                    query.Where(e => e.Participations.Any(p => p.ArtistId == artist));
+                    query = query.Where(e => e.Participations.Any(p => p.ArtistId == artist));
 
                 return await query.ToListAsync();
             }

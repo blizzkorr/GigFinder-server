@@ -33,15 +33,15 @@ namespace GigFinder.Controllers
                 return Unauthorized();
 
             if (!@event.HasValue && !host.HasValue && !artist.HasValue)
-                return await _context.Participations.Where(p => p.ArtistId == authorizedUser.Value.Id || p.Event.HostId == authorizedUser.Value.Id).ToListAsync();
+                return await _context.Participations.Include(p => p.Event).Where(p => p.ArtistId == authorizedUser.Value.Id || p.Event.HostId == authorizedUser.Value.Id).ToListAsync();
 
-            var query = _context.Participations;
+            var query = (IQueryable<Participation>)_context.Participations;
             if (@event.HasValue)
-                query.Where(p => p.EventId == @event);
+                query = query.Include(p => p.Artist).Where(p => p.EventId == @event);
             if (host.HasValue)
-                query.Where(p => p.Event.HostId == host);
+                query = query.Include(p => p.Artist).Include(p => p.Event).Where(p => p.Event.HostId == host);
             if (artist.HasValue)
-                query.Where(p => p.ArtistId == artist);
+                query = query.Include(p => p.Event).Where(p => p.ArtistId == artist);
 
             return await query.ToListAsync();
         }
