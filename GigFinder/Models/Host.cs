@@ -34,6 +34,11 @@ namespace GigFinder.Models
             Pictures = new HashSet<Picture>();
             Reviews = new HashSet<Review>();
         }
+
+        public GeoPoint GetGeoPoint()
+        {
+            return new GeoPoint() { Longitude = Longitude, Latitude = Latitude };
+        }
     }
 
     public class HostConfiguration : IEntityTypeConfiguration<Host>

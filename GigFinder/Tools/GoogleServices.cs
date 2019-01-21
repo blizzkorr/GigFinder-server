@@ -45,12 +45,15 @@ namespace GigFinder.Tools
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(to))
+                    throw new ArgumentNullException(nameof(to));
+
                 var serverKey = $"key={""}";
                 var senderId = $"id={""}";
 
                 var data = new
                 {
-                    to, // Recipient device token
+                    to,
                     notification = new { title, body }
                 };
 

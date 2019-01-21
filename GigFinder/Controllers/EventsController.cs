@@ -152,22 +152,7 @@ namespace GigFinder.Controllers
 
             foreach (var searchRequest in _context.SearchRequests)
                 if (searchRequest.IsEventInRadius(@event))
-                    await GoogleServices.SendFCMAsync("to", "New event in your search area", "body");
-        }
-
-        private void SetEventGenres(Event @event)
-        {
-            if (@event == null)
-                throw new ArgumentNullException(nameof(@event));
-                
-            foreach (var hostGenre in @event.EventGenres)
-                @event.EventGenres.Remove(hostGenre);
-
-            if (@event.GenreIds == null || @event.GenreIds.Count == 0)
-                return;
-
-            foreach (int genreId in @event.GenreIds)
-                @event.EventGenres.Add(new EventGenre() { EventId = @event.Id, GenreId = genreId });
+                    await GoogleServices.SendFCMAsync(searchRequest.Artist.UserId.DeviceToken, "New event in your search area", $"Event name: {@event.Title}\nHost: {@event.Host.Name}");
         }
 
         private bool EventExists(int id)

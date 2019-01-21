@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GigFinder.Migrations
 {
     [DbContext(typeof(GigFinderContext))]
-    [Migration("20190116233225_InitialCreate")]
+    [Migration("20190121132932_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -434,6 +434,9 @@ namespace GigFinder.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("DeviceToken")
+                        .IsRequired();
 
                     b.Property<string>("GoogleIdToken")
                         .IsRequired();

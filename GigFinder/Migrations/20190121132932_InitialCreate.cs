@@ -34,7 +34,8 @@ namespace GigFinder.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    GoogleIdToken = table.Column<string>(nullable: false)
+                    GoogleIdToken = table.Column<string>(nullable: false),
+                    DeviceToken = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {

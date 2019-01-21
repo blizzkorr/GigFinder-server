@@ -30,6 +30,11 @@ namespace GigFinder.Models
             Pictures = new HashSet<Picture>();
             Participations = new HashSet<Participation>();
         }
+
+        public GeoPoint GetGeoPoint()
+        {
+            return new GeoPoint() { Longitude = Longitude, Latitude = Latitude };
+        }
     }
 
     public class EventConfiguration : IEntityTypeConfiguration<Event>

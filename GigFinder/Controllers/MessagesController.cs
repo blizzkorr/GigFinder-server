@@ -142,7 +142,7 @@ namespace GigFinder.Controllers
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
 
-            await GoogleServices.SendFCMAsync("to", $"New message from {message.Author.Name}", "body");
+            await GoogleServices.SendFCMAsync(message.Receiver.DeviceToken, $"New message from {message.Author.Host.Name ?? message.Author.Artist.Name}", message.Content);
         }
 
         private bool MessageExists(int id)

@@ -24,6 +24,11 @@ namespace GigFinder.Models
             SearchRequestGenres = new HashSet<SearchRequestGenre>();
         }
 
+        public GeoPoint GetGeoPoint()
+        {
+            return new GeoPoint() { Longitude = Longitude, Latitude = Latitude };
+        }
+
         public bool IsEventInRadius(Event @event)
         {
             if (this == null)
@@ -31,7 +36,7 @@ namespace GigFinder.Models
             if (@event == null)
                 throw new ArgumentNullException(nameof(@event));
 
-            return Radius <= Location.ComputeDistance(@event.Location);
+            return Radius <= GeoPoint.CalculateDistance(GetGeoPoint(), @event.GetGeoPoint());
         }
     }
 
