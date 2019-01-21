@@ -30,12 +30,8 @@ namespace GigFinder.Controllers
 
             if (authorizedUser.Value == null)
                 return Unauthorized();
-            else if (authorizedUser.Value.Artist == null && authorizedUser.Value.Host != null)
-                return authorizedUser.Value.Host;
-            else if (authorizedUser.Value.Artist != null && authorizedUser.Value.Host == null)
-                return authorizedUser.Value.Artist;
             else
-                return new { authorizedUser.Value.Artist, authorizedUser.Value.Host };
+                return new { Artist = _context.Artists.Find(authorizedUser.Value.Id), Host = _context.Hosts.Find(authorizedUser.Value.Id) };
         }
     }
 }
