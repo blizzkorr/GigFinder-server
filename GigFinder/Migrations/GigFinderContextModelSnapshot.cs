@@ -433,8 +433,7 @@ namespace GigFinder.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("DeviceToken")
-                        .IsRequired();
+                    b.Property<string>("DeviceToken");
 
                     b.Property<string>("GoogleIdToken")
                         .IsRequired();

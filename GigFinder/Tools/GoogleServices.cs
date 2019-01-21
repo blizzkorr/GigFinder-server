@@ -46,7 +46,7 @@ namespace GigFinder.Tools
             try
             {
                 if (string.IsNullOrWhiteSpace(to))
-                    throw new ArgumentNullException(nameof(to));
+                    return false;
 
                 var serverKey = $"key={""}";
                 var senderId = $"id={""}";
