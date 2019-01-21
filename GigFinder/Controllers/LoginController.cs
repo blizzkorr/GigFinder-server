@@ -29,15 +29,6 @@ namespace GigFinder.Controllers
                 return Unauthorized();
 
             return authorizedUser.Value != default(UserID);
-
-            //if (authorizedUser.Value == null)
-            //    return false;
-            //else if (authorizedUser.Value.Artist == null && authorizedUser.Value.Host != null)
-            //    return authorizedUser.Value.Host;
-            //else if (authorizedUser.Value.Artist != null && authorizedUser.Value.Host == null)
-            //    return authorizedUser.Value.Artist;
-            //else
-            //    return new { Artist = authorizedUser.Value.Artist, Host = authorizedUser.Value.Host };
         }
     }
 }

@@ -58,16 +58,16 @@ For current test purposes, this feature is disabled.
 	DELETE /pictures/4
 	  delete a specific picture, current authenticated user hast to be owner
 
-### .../participants
-	GET /participants?event=<(int)id>&host=<(int)id>&artist=<(int)id>
+### .../participations
+	GET /participations?event=<(int)id>&host=<(int)id>&artist=<(int)id>
 	  get participations by event, host or artist
-	GET /participants/5
+	GET /participations/5
 	  get participations by id
-	POST /participants
+	POST /participations
 	  create a new participation for the current authenticated user
-	PUT /participants/5
+	PUT /participations/5
 	  update a participation for the current authenticated user
-	DELETE /participants/5
+	DELETE /participations/5
 	  delete a participation by id for the current authenticated user
 
 ### .../messages 
@@ -86,9 +86,9 @@ For current test purposes, this feature is disabled.
 	POST /reviews
 	  create a new review by the current authenticated user
 	PUT /reviews/7
-	  get participations by event, host or artist
+	  get reviews by event, host or artist
 	DELETE /reviews/7
-	  get participations by event, host or artist
+	  get reviews by event, host or artist
 
 ### .../searchrequests
 	GET /searchrequests
