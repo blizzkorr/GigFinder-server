@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <None Update="GigFinder.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

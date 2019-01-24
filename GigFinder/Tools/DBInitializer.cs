@@ -57,6 +57,7 @@ namespace GigFinder.Tools
             context.SocialMedias.Add(new SocialMedia() { Name = "MySpace", Website = "https://myspace.com/" });
             context.SocialMedias.Add(new SocialMedia() { Name = "last.fm", Website = "https://www.last.fm/" });
             context.SocialMedias.Add(new SocialMedia() { Name = "Spotify", Website = "https://www.spotify.com/" });
+            context.SocialMedias.Add(new SocialMedia() { Name = "Instagram", Website = "https://www.instagram.com/" });
             context.SocialMedias.Add(new SocialMedia() { Name = "Website", Website = "unset" });
 
             await context.SaveChangesAsync();
