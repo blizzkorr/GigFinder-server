@@ -113,7 +113,7 @@ namespace GigFinder.Controllers
             await _context.SaveChangesAsync();
 
             if (message != null)
-                Task.Run(() => NotifyReceiver(message));
+                Task.Run(() => NotifyReceiverAsync(message));
 
             return CreatedAtAction("GetMessage", new { id = message.Id }, message);
         }
@@ -137,7 +137,7 @@ namespace GigFinder.Controllers
         //    return message;
         //}
 
-        private async Task NotifyReceiver(Message message)
+        private async Task NotifyReceiverAsync(Message message)
         {
             if (message == null)
                 throw new ArgumentNullException(nameof(message));

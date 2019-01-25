@@ -83,6 +83,11 @@ namespace GigFinder.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                
+                if (participation.ArtistId == authorizedUser.Value.Id)
+                    Task.Run(() => NotifyHostUpdateAsync(participation));
+                else if (participation.Event.HostId == authorizedUser.Value.Id)
+                    Task.Run(() => NotifyArtistUpdateAsync(participation));
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -116,7 +121,8 @@ namespace GigFinder.Controllers
             {
                 await _context.SaveChangesAsync();
 
-                // Notify Host or Artist
+                if (participation.ArtistId == authorizedUser.Value.Id)
+                    Task.Run(() => NotifyHostAsync(participation));
             }
             catch (DbUpdateException)
             {
@@ -151,6 +157,32 @@ namespace GigFinder.Controllers
             // Notify Host or Artist
 
             return participation;
+        }
+
+        private async Task NotifyHostAsync(Participation participation)
+        {
+            if (participation == null)
+                throw new ArgumentNullException(nameof(participation));
+
+            await GoogleServices.SendFCMAsync(participation.Event.Host.UserId.DeviceToken, "New participation request", $"{participation.Artist.Name} wants to participate in your event {participation.Event.Title}");
+        }
+
+        private async Task NotifyHostUpdateAsync(Participation participation)
+        {
+            if (participation == null)
+                throw new ArgumentNullException(nameof(participation));
+            
+            await GoogleServices.SendFCMAsync(participation.Event.Host.UserId.DeviceToken, "New participation update", $"{participation.Artist.Name} has updated the participation at your event {participation.Event.Title}");
+        }
+
+        private async Task NotifyArtistUpdateAsync(Participation participation)
+        {
+            if (participation == null)
+                throw new ArgumentNullException(nameof(participation));
+
+            string partString = participation.Accepted ? "accepted" : "declined";
+
+            await GoogleServices.SendFCMAsync(participation.Artist.UserId.DeviceToken, "New participation update", $"Your participation at {participation.Event.Title} has been {partString}");
         }
 
         private bool ParticipationExists(int id)

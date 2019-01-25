@@ -116,7 +116,7 @@ namespace GigFinder.Controllers
             await _context.SaveChangesAsync();
 
             if (@event != null)
-                Task.Run(() => NotifySearchRequests(@event));
+                Task.Run(() => NotifySearchRequestsAsync(@event));
 
             return CreatedAtAction("GetEvent", new { id = @event.Id }, @event);
         }
@@ -145,7 +145,7 @@ namespace GigFinder.Controllers
             return @event;
         }
 
-        private async Task NotifySearchRequests(Event @event)
+        private async Task NotifySearchRequestsAsync(Event @event)
         {
             if (@event == null)
                 throw new ArgumentNullException(nameof(@event));
