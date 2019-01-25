@@ -23,7 +23,7 @@ namespace GigFinder.Controllers
 
         // PUT: api/DeviceToken/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDeviceToken(int id, string deviceToken)
+        public async Task<IActionResult> PutDeviceToken(int id, [FromBody] string deviceToken)
         {
             var authorizedUser = await Authentication.GetAuthenticatedUserAsync(_context, Request);
             if (authorizedUser.Result is UnauthorizedResult)

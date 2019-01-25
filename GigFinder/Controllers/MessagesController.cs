@@ -113,7 +113,8 @@ namespace GigFinder.Controllers
             await _context.SaveChangesAsync();
 
             if (message != null)
-                Task.Run(() => NotifyReceiverAsync(message));
+                Task.Run(() => NotifyReceiverAsync(message.Id));
+                //await NotifyReceiverAsync(message.Id);
 
             return CreatedAtAction("GetMessage", new { id = message.Id }, message);
         }
@@ -137,12 +138,14 @@ namespace GigFinder.Controllers
         //    return message;
         //}
 
-        private async Task NotifyReceiverAsync(Message message)
+        private async Task NotifyReceiverAsync(int id)
         {
-            if (message == null)
-                throw new ArgumentNullException(nameof(message));
-
-            await GoogleServices.SendFCMAsync(message.Receiver.DeviceToken, $"New message from {message.Author.Host.Name ?? message.Author.Artist.Name}", message.Content);
+            using (var db = new GigFinderContext())
+            {
+                Message message = db.Messages.Include(m => m.Author.Host).Include(m => m.Author.Artist).SingleOrDefault(m => m.Id == id);
+                if (message != null) 
+                    await GoogleServices.SendFCMAsync(message.Receiver.DeviceToken, $"New message from {message.Author.Host?.Name ?? message.Author.Artist?.Name}", message.Content);
+            }
         }
 
         private bool MessageExists(int id)

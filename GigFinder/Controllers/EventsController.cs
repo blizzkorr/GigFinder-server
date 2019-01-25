@@ -150,9 +150,12 @@ namespace GigFinder.Controllers
             if (@event == null)
                 throw new ArgumentNullException(nameof(@event));
 
-            foreach (var searchRequest in _context.SearchRequests)
-                if (searchRequest.IsEventInRadius(@event))
-                    await GoogleServices.SendFCMAsync(searchRequest.Artist.UserId.DeviceToken, "New event in your search area", $"Event name: {@event.Title}\nHost: {@event.Host.Name}");
+            using (var db = new GigFinderContext())
+            {
+                foreach (var searchRequest in db.SearchRequests.Include(s => s.Artist.UserId))
+                    if (searchRequest.IsEventInRadius(@event))
+                        await GoogleServices.SendFCMAsync(searchRequest.Artist.UserId.DeviceToken, "New event in your search area", $"Event name: {@event.Title}\nHost: {@event.Host.Name}");
+            }
         }
 
         private bool EventExists(int id)

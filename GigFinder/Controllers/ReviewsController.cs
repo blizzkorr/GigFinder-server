@@ -107,7 +107,7 @@ namespace GigFinder.Controllers
             await _context.SaveChangesAsync();
 
             if (review != null)
-                Task.Run(() => NotifyReceiverAsync(review));
+                Task.Run(() => NotifyReceiverAsync(review.Id));
 
             return CreatedAtAction("GetReview", new { id = review.Id }, review);
         }
@@ -136,15 +136,16 @@ namespace GigFinder.Controllers
             return review;
         }
 
-        private async Task NotifyReceiverAsync(Review review)
+        private async Task NotifyReceiverAsync(int id)
         {
-            if (review == null)
-                throw new ArgumentNullException(nameof(review));
-
-            if (review.ArtistId != null)
-                await GoogleServices.SendFCMAsync(review.Artist.UserId.DeviceToken, "New review", $"You have a new {review.Rating} star review from {review.Author.Host.UserId}");
-            else
-                await GoogleServices.SendFCMAsync(review.Host.UserId.DeviceToken, "New review", $"You have a new {review.Rating} star review from {review.Author.Artist.UserId}");
+            using (var db = new GigFinderContext())
+            {
+                Review review = db.Reviews.Include(r => r.Author.Host).Include(r => r.Author.Artist).Include(r => r.Host.UserId).Include(r => r.Artist.UserId).SingleOrDefault(m => m.Id == id);
+                if (review != null && review.Artist != null)
+                    await GoogleServices.SendFCMAsync(review.Artist.UserId.DeviceToken, "New review", $"You have a new {review.Rating} star review from {review.Author.Host.UserId}");
+                else if (review != null && review.Host != null)
+                    await GoogleServices.SendFCMAsync(review.Host.UserId.DeviceToken, "New review", $"You have a new {review.Rating} star review from {review.Author.Artist.UserId}");
+            }
         }
 
         private bool ReviewExists(int id)
