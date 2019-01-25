@@ -267,6 +267,7 @@ namespace GigFinder.Migrations
                     Description = table.Column<string>(nullable: false),
                     Longitude = table.Column<double>(nullable: false),
                     Latitude = table.Column<double>(nullable: false),
+                    Gage = table.Column<double>(nullable: false),
                     Start = table.Column<DateTime>(nullable: false),
                     End = table.Column<DateTime>(nullable: false),
                     HostId = table.Column<int>(nullable: false),

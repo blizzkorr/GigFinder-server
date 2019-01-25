@@ -92,6 +92,8 @@ namespace GigFinder.Migrations
 
                     b.Property<DateTime>("End");
 
+                    b.Property<double>("Gage");
+
                     b.Property<int>("HostId");
 
                     b.Property<double>("Latitude");
