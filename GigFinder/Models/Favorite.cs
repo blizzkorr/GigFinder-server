@@ -28,8 +28,8 @@ namespace GigFinder.Models
 
             builder.Property(f => f.Timestamp).IsRowVersion();
 
-            builder.HasOne(f => f.Artist).WithMany(a => a.Favorites).HasForeignKey(f => f.ArtistId).IsRequired();
-            builder.HasOne(f => f.Host).WithMany().HasForeignKey(f => f.HostId).IsRequired();
+            builder.HasOne(f => f.Artist).WithMany(a => a.Favorites).HasForeignKey(f => f.ArtistId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(f => f.Host).WithMany().HasForeignKey(f => f.HostId).IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace GigFinder.Migrations
                         column: x => x.ParentId,
                         principalTable: "Genres",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -179,7 +179,7 @@ namespace GigFinder.Migrations
                         column: x => x.ProfilePictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -209,7 +209,7 @@ namespace GigFinder.Migrations
                         column: x => x.ProfilePictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,7 +231,7 @@ namespace GigFinder.Migrations
                         column: x => x.ThumbnailId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -330,7 +330,7 @@ namespace GigFinder.Migrations
                         column: x => x.ArtistId,
                         principalTable: "Artists",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reviews_UserIDs_AuthorId",
                         column: x => x.AuthorId,
@@ -342,7 +342,7 @@ namespace GigFinder.Migrations
                         column: x => x.HostId,
                         principalTable: "Hosts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -606,7 +606,7 @@ namespace GigFinder.Migrations
                 column: "ArtistId",
                 principalTable: "Artists",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Pictures_Events_EventId",
@@ -614,7 +614,7 @@ namespace GigFinder.Migrations
                 column: "EventId",
                 principalTable: "Events",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Pictures_Hosts_HostId",
@@ -622,7 +622,7 @@ namespace GigFinder.Migrations
                 column: "HostId",
                 principalTable: "Hosts",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

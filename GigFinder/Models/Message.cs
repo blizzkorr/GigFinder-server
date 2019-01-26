@@ -33,8 +33,8 @@ namespace GigFinder.Models
             builder.Property(m => m.Created).HasDefaultValueSql("DATETIME('NOW')").IsRequired();
             builder.Property(m => m.Timestamp).IsRowVersion();
 
-            builder.HasOne(m => m.Author).WithMany(u => u.SentMessages).HasForeignKey(m => m.AuthorId).IsRequired();
-            builder.HasOne(m => m.Receiver).WithMany(u => u.ReceivedMessages).HasForeignKey(m => m.ReceiverId).IsRequired();
+            builder.HasOne(m => m.Author).WithMany(u => u.SentMessages).HasForeignKey(m => m.AuthorId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(m => m.Receiver).WithMany(u => u.ReceivedMessages).HasForeignKey(m => m.ReceiverId).IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

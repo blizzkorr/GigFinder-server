@@ -38,8 +38,8 @@ namespace GigFinder.Models
 
             builder.Property(u => u.GoogleIdToken).IsRequired();
 
-            builder.HasOne(u => u.Artist).WithOne(a => a.UserId).HasForeignKey<Artist>(a => a.Id);
-            builder.HasOne(u => u.Host).WithOne(h => h.UserId).HasForeignKey<Host>(h => h.Id);
+            builder.HasOne(u => u.Artist).WithOne(a => a.UserId).HasForeignKey<Artist>(a => a.Id).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(u => u.Host).WithOne(h => h.UserId).HasForeignKey<Host>(h => h.Id).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

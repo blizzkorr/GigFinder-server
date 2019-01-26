@@ -27,8 +27,8 @@ namespace GigFinder.Models
 
             builder.Property(hg => hg.Timestamp).IsRowVersion();
 
-            builder.HasOne(hg => hg.Host).WithMany(h => h.HostGenres).HasForeignKey(hg => hg.HostId).IsRequired();
-            builder.HasOne(hg => hg.Genre).WithMany().HasForeignKey(hg => hg.GenreId).IsRequired();
+            builder.HasOne(hg => hg.Host).WithMany(h => h.HostGenres).HasForeignKey(hg => hg.HostId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(hg => hg.Genre).WithMany().HasForeignKey(hg => hg.GenreId).IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

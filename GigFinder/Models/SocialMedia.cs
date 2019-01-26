@@ -30,7 +30,7 @@ namespace GigFinder.Models
             builder.Property(sm => sm.Website).IsRequired();
             builder.Property(sm => sm.Timestamp).IsRowVersion();
 
-            builder.HasOne(sm => sm.Thumbnail).WithOne().HasForeignKey<SocialMedia>(sm => sm.ThumbnailId);
+            builder.HasOne(sm => sm.Thumbnail).WithOne().HasForeignKey<SocialMedia>(sm => sm.ThumbnailId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace GigFinder.Models
             builder.Property(h => h.BackgroundColor).HasMaxLength(6).IsFixedLength().IsRequired();
             builder.Property(h => h.Timestamp).IsRowVersion();
 
-            builder.HasOne(h => h.ProfilePicture).WithOne().HasForeignKey<Host>(h => h.ProfilePictureId);
+            builder.HasOne(h => h.ProfilePicture).WithOne().HasForeignKey<Host>(h => h.ProfilePictureId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

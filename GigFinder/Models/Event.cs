@@ -52,7 +52,7 @@ namespace GigFinder.Models
             builder.Property(e => e.End).IsRequired();
             builder.Property(e => e.Timestamp).IsRowVersion();
 
-            builder.HasOne(e => e.Host).WithMany(h => h.Events).HasForeignKey(e => e.HostId).IsRequired();
+            builder.HasOne(e => e.Host).WithMany(h => h.Events).HasForeignKey(e => e.HostId).IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace GigFinder.Models
             builder.Property(g => g.Value).IsRequired();
             builder.Property(g => g.Timestamp).IsRowVersion();
 
-            builder.HasOne(g => g.Parent).WithMany(p => p.SubGenres).HasForeignKey(g => g.ParentId);
+            builder.HasOne(g => g.Parent).WithMany(p => p.SubGenres).HasForeignKey(g => g.ParentId).OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

@@ -33,9 +33,9 @@ namespace GigFinder.Models
             builder.Property(r => r.Rating).IsRequired();
             builder.Property(r => r.Timestamp).IsRowVersion();
 
-            builder.HasOne(r => r.Author).WithMany(u => u.WrittenReviews).HasForeignKey(r => r.AuthorId).IsRequired();
-            builder.HasOne(r => r.Artist).WithMany(a => a.Reviews).HasForeignKey(r => r.ArtistId);
-            builder.HasOne(r => r.Host).WithMany(h => h.Reviews).HasForeignKey(r => r.HostId);
+            builder.HasOne(r => r.Author).WithMany(u => u.WrittenReviews).HasForeignKey(r => r.AuthorId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(r => r.Artist).WithMany(a => a.Reviews).HasForeignKey(r => r.ArtistId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(r => r.Host).WithMany(h => h.Reviews).HasForeignKey(r => r.HostId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

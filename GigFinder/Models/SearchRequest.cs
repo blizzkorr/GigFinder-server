@@ -51,7 +51,7 @@ namespace GigFinder.Models
             builder.Property(sr => sr.Latitude).IsRequired();
             builder.Property(sr => sr.Timestamp).IsRowVersion();
 
-            builder.HasOne(sr => sr.Artist).WithMany(a => a.SearchRequests).HasForeignKey(sr => sr.ArtistId).IsRequired();
+            builder.HasOne(sr => sr.Artist).WithMany(a => a.SearchRequests).HasForeignKey(sr => sr.ArtistId).IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
