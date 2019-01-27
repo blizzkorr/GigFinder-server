@@ -33,15 +33,15 @@ namespace GigFinder.Controllers
                 return Unauthorized();
 
             if (!@event.HasValue && !host.HasValue && !artist.HasValue)
-                return await _context.Participations.Include(p => p.Event).Include(p => p.Event.EventGenres).Where(p => p.ArtistId == authorizedUser.Value.Id || p.Event.HostId == authorizedUser.Value.Id).ToListAsync();
+                return await _context.Participations.Include(p => p.Event).ThenInclude(e => e.EventGenres).Where(p => p.ArtistId == authorizedUser.Value.Id || p.Event.HostId == authorizedUser.Value.Id).ToListAsync();
 
             var query = (IQueryable<Participation>)_context.Participations;
             if (@event.HasValue)
-                query = query.Include(p => p.Artist).Where(p => p.EventId == @event);
+                query = query.Include(p => p.Artist).Include(p => p.Event).ThenInclude(e => e.EventGenres).Where(p => p.EventId == @event);
             if (host.HasValue)
-                query = query.Include(p => p.Artist).Include(p => p.Event).Include(p => p.Event.EventGenres).Where(p => p.Event.HostId == host);
+                query = query.Include(p => p.Artist).Include(p => p.Event).ThenInclude(e => e.EventGenres).Where(p => p.Event.HostId == host);
             if (artist.HasValue)
-                query = query.Include(p => p.Event).Where(p => p.ArtistId == artist);
+                query = query.Include(p => p.Event).ThenInclude(e => e.EventGenres).Where(p => p.ArtistId == artist);
 
             return await query.ToListAsync();
         }
