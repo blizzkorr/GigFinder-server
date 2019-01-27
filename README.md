@@ -6,9 +6,15 @@ URL: https://gigfinder.azurewebsites.net/api/...
 Authorization token (Google id token) must be always sent in the “Authorization” header.
 For current test purposes, this feature is disabled.
 
+Die Objekte der Interfaces sind die jeweils namentlich zugrundeliegenden Objekte aus dem Model Verzeichnis. (Übertragen im JSON Format)
+
 ### .../login 
 	GET /login
 	  checks if the current GoogleUser already has an account
+	  
+### .../user
+	GET /user
+	  get the current authenticated profiles, returns a combined Artist/Host object
 
 ### .../artists 
 	GET /artists
@@ -33,6 +39,10 @@ For current test purposes, this feature is disabled.
 	  update host profile of current authenticated user 
 	DELETE /hosts/3
 	  update host profile of current authenticated user 
+
+### .../devicetoken 
+	PUT /devicetoken/4
+	  updates the devicetoken of the current authenticated user, has to be the same as id in PUT statement
 
 ### .../events
 	GET /events?location=<(double)latitude,(double)longitude>&radius=<(double)radius>&genre=<(int)id>&host=<(int)id>&artist=<(int)id>
@@ -77,6 +87,10 @@ For current test purposes, this feature is disabled.
 	  get messages by id for the current authenticated user
 	POST /messages 
 	  create a new message for the current authenticated user
+
+### .../receivers 
+	GET /receivers
+	  get all receivers with their last message for the current authenticatesd user
 
 ### .../reviews
 	GET /reviews?host=<(int)id>&artist=<(int)id>
